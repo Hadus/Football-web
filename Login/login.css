@@ -1,0 +1,16 @@
+body {
+  background: url('../lib/images/background_01.jpeg') 0 0 no-repeat;
+  background-size: cover;
+  display: block;
+  position: relative;
+}
+
+.login-box {
+  width: 360px;
+  height: 360px;
+  opacity: .8;
+  position: absolute;
+  right: 150px;
+  bottom: 150px;
+  background: #ccc;
+}

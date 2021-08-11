@@ -12,6 +12,12 @@
   <title>足彩软件</title>
   <link rel="bookmark" href="./lib/images/favicon.ico" type="image/x-icon">
   <link rel="shortcut icon" href="./lib/images/favicon.ico">
+  <script>
+    const token = sessionStorage.getItem('token');
+    if(!token || token !== 'pass'){
+      window.location.href = './Login/login.html';
+    }
+  </script>
   <link rel="stylesheet" href="./index.css">
   <script src="./index.js"></script>
 </head>
