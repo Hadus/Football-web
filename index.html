@@ -19,14 +19,14 @@
 
 <body>
   <aside>
-    <ul id="s_nav">
-      <li data-nav="index" class="active"><a href="javascript:;">首页</a></li>
+    <ul id="s_navBox">
+      <li data-nav="FB" class="active"><a href="javascript:;">首页</a></li>
       <li data-nav="BD"><a href="javascript:;">BD</a></li>
     </ul>
   </aside>
   <main>
     <header></header>
-    <div class="content content-index show">
+    <div class="content content-FB show" id="s_content_FB">
       <div class="bet">
         <ul id="s_bet">
           <li><label>体彩投注：<input class="big"  id="s_jzPayAmount" type="number"></label></li>
@@ -72,15 +72,15 @@
             <button class="susscess" id="s_forceRefresh">强制刷新后台数据</button>
           </div> -->
         </div>
-        <div class="table table-index" id="s_tab_index">
+        <div class="table table-index show" id="s_tab_index">
     
         </div>
-        <div class="table table-ttg hide" id="s_tab_ttg">
+        <div class="table table-ttg" id="s_tab_ttg">
     
         </div>
       </div>
     </div>
-    <div class="content content-BD">
+    <div class="content content-BD" id="s_content_BD">
       <div class="bet">
         <ul id="s_bet">
           <li><label>体彩投注：<input class="big"  id="s_jzPayAmount" type="number"></label></li>

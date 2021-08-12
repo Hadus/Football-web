@@ -63,14 +63,14 @@ function init(w, d) {
   Object.assign(w, {
     FT: {}, // football
     BD: {}, // BD
-    showNavName: 'index', // 导航栏名称
+    showNavName: 'FB', // 导航栏名称
   });
   bindNav(); // 绑定导航栏
 
 
   /* 方法：绑定导航栏点击事件 */
   function bindNav() {
-    const s_nav_List = d.querySelectorAll('#s_nav>li');
+    const s_nav_List = d.querySelectorAll('#s_navBox>li');
     const s_navContent_list = d.querySelectorAll('main>.content');
     s_nav_List.forEach((ele, index) => {
       ele.addEventListener('click', function (e) {

@@ -38,8 +38,12 @@ body {
   margin-right: 5px;
 }
 
-.list>.table.hide {
+.list>.table {
   display: none;
+}
+
+.list>.table.show {
+  display: block;
 }
 
 .list>.table>p.no-data {

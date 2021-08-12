@@ -4,11 +4,6 @@ body {
   display: none;
 }
 
-html.no-scroll,
-body.no-scroll {
-  overflow: hidden;
-}
-
 .no-select {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
