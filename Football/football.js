@@ -1289,7 +1289,7 @@
       G.dragBox.node && (G.dragBox.node.style.top = G.dragBox.top + 'px');
     }
   }
-)(window, document, window.FT, 's_content_FB');
+)(window, document, window.FB, 's_content_FB');
 
 
 

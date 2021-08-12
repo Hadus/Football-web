@@ -61,7 +61,7 @@ window.onload = function () {
 /* 方法：初始化 */
 function init(w, d) {
   Object.assign(w, {
-    FT: {}, // football
+    FB: {}, // football
     BD: {}, // BD
     showNavName: 'FB', // 导航栏名称
   });
