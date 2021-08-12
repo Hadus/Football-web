@@ -2,16 +2,26 @@
   function (w, d) {
     w.onload = function () {
       if (!w.location.host) {
-        const dataFileList = [
-          "../lib/data/Login.js",
-        ]
-        dataFileList.forEach((ele) => {
-          const script = d.createElement('script');
-          script.src = ele + '?' + new Date().getTime();
-          d.querySelector('body').appendChild(script);
-        })
+        initJSON();
       }
-    
+      initJS();
+      init();
+    }
+
+    /* 方法：初始化 JSON */
+    function initJSON() {
+      const dataFileList = [
+        "../lib/data/Login.js",
+      ]
+      dataFileList.forEach((ele) => {
+        const script = d.createElement('script');
+        script.src = ele + '?' + new Date().getTime();
+        d.querySelector('body').appendChild(script);
+      })
+    }
+
+    /* 方法：初始化 JS */
+    function initJS() {
       const jsFileList = [
         '../JS/api.js',
         '../JS/utils.js',
@@ -22,7 +32,6 @@
         script.src = ele + '?' + new Date().getTime();
         d.querySelector('body').appendChild(script);
       })
-      init();
     }
     
     /* 方法：初始化 login */
