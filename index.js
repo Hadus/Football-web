@@ -3,7 +3,8 @@ initCSS();
 /* 方法：初始化 CSS */
 function initCSS() {
   const cssFileList = [
-    './Football/football.css'
+    './Football/football.css',
+    './BD/BD.css',
   ];
   
   cssFileList.forEach((ele) => {
@@ -19,7 +20,8 @@ function initJS() {
   const jsFileList = [
     './JS/utils.js',
     './JS/api.js',
-    './Football/football.js'
+    './Football/football.js',
+    './BD/BD.js'
   ];
 
   jsFileList.forEach((ele) => {
@@ -46,7 +48,47 @@ function initJSON() {
 
 window.onload = function () {
   if (!window.location.host) {
+    Object.assign(window, {
+      mock: {}
+    });
     initJSON();
   }
   initJS();
+
+  init(window, document); // 初始化
 }
+
+/* 方法：初始化 */
+function init(w, d) {
+  Object.assign(w, {
+    FT: {}, // football
+    BD: {}, // BD
+    showNavName: 'index', // 导航栏名称
+  });
+  bindNav(); // 绑定导航栏
+
+
+  /* 方法：绑定导航栏点击事件 */
+  function bindNav() {
+    const s_nav_List = d.querySelectorAll('#s_nav>li');
+    const s_navContent_list = d.querySelectorAll('main>.content');
+    s_nav_List.forEach((ele, index) => {
+      ele.addEventListener('click', function (e) {
+        const navName = ele.dataset['nav'];
+        if(navName === w.showNavName){
+          return false;
+        }
+        s_navContent_list.forEach((ele_inner, index_inner) => {
+          ele_inner.classList.remove('show');
+          s_nav_List[index_inner].classList.remove('active');
+        })
+        s_navContent_list[index].classList.add('show');
+        ele.classList.add('active');
+        w.showNavName = navName;
+      })
+    })
+  }
+  
+  // init end
+}
+

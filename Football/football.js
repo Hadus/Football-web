@@ -1,8 +1,8 @@
 (
-  function (w, d) {
-    Object.assign(w, {
-      tableNode_index: d.querySelector('#s_table_index'), // 列表的 table
-      tableNode_ttg: d.querySelector('#s_table_ttg'), // 列表的 table
+  function (w, FT, d) {
+    Object.assign(FT, {
+      tableNode_index: d.querySelector('#s_tab_index'), // 列表的 table
+      tableNode_ttg: d.querySelector('#s_tab_ttg'), // 列表的 table
       s_bet: d.querySelector('#s_bet'), // bet
       response: {}, // API返回值
       listData_index: [], // 数据
@@ -21,7 +21,7 @@
       }, 
       isPlayAudio: false, // 是否播放音频
       filterWithoutAudio: false, // bet 切换触发音频播放
-      showTableName: 'index',// 是否为首页
+      showTabName: 'index',// 是否为首页
       mesNode: d.querySelector('#s_mes'), // mes box
       mesContentNode: d.querySelector('#s_mesContent'), // mes content
       mesCallback: null, // mes 的回调函数
@@ -36,7 +36,6 @@
         top: 0
       },
     });
-
     getData();
     initBetConst();
     bindBet(betAction);
@@ -52,14 +51,14 @@
     bindDragBox(); // 绑定拖拽
 
     // 提示用户选择是否开启预警
-    audioAlert();
+    // audioAlert();
 
     /* 方法：初始化 table */
     function initTable({ nodeStr_index = '', nodeStr_ttg = '' }) {
-      tableNode_index.innerHTML = '';
-      tableNode_ttg.innerHTML = '';
-      tableNode_index.innerHTML = nodeStr_index;
-      tableNode_ttg.innerHTML = nodeStr_ttg;
+      FT.tableNode_index.innerHTML = '';
+      FT.tableNode_ttg.innerHTML = '';
+      FT.tableNode_index.innerHTML = nodeStr_index;
+      FT.tableNode_ttg.innerHTML = nodeStr_ttg;
       bindIsBet(); // 绑定每个已投注
       bindCalculator(); // 绑定每个calculator
     }
@@ -80,17 +79,17 @@
         danger: 0
       };
 
-      const s_hightBenefitPoint = s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = s_bet.querySelector('#s_middleBenefitPoint');
+      const s_hightBenefitPoint = FT.s_bet.querySelector('#s_hightBenefitPoint');
+      const s_middleBenefitPoint = FT.s_bet.querySelector('#s_middleBenefitPoint');
       const hightBenefitPoint = s_hightBenefitPoint.nowValue || s_hightBenefitPoint.value;
       const middleBenefitPoint = s_middleBenefitPoint.nowValue || s_middleBenefitPoint.value;
       listData_index.forEach((ele, index) => {
         // 本剧游戏是否投注
         // -1: 未投注
         // 1: 已投注
-        ele.isBet =  w.hideBetList.includes(ele.calcId)? 1 : -1;
+        ele.isBet =  FT.hideBetList.includes(ele.calcId)? 1 : -1;
         const filterCondition_hasFilter = !getFlag_filters || (getFlag_filters && getFlag_filters(ele));
-        const filterCondition_isBet = !w.isShowAllBet && ele.isBet === 1;
+        const filterCondition_isBet = !FT.isShowAllBet && ele.isBet === 1;
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
         // 过滤
         if(filterCondition){
@@ -172,9 +171,9 @@
         // 本剧游戏是否投注
         // -1: 未投注
         // 1: 已投注
-        ele.isBet =  w.hideBetList.includes(ele.calcId)? 1 : -1;
+        ele.isBet =  FT.hideBetList.includes(ele.calcId)? 1 : -1;
         const filterCondition_hasFilter = !getFlag_filters || (getFlag_filters && getFlag_filters(ele));
-        const filterCondition_isBet = !w.isShowAllBet && ele.isBet === 1;
+        const filterCondition_isBet = !FT.isShowAllBet && ele.isBet === 1;
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
         // 过滤
         if(filterCondition){
@@ -276,7 +275,7 @@
         }
 
       })
-      w.alertTimes = {
+      FT.alertTimes = {
         warning: alert_times_index.warning + alert_times_ttg.warning,
         danger: alert_times_index.danger + alert_times_ttg.danger,
       }
@@ -296,10 +295,10 @@
       } else if(alert_times_ttg.warning > 0){
         s_lis[1].classList.add('tips','yellow');
       }
-      if(!w.filterWithoutAudio && w.isPlayAudio && w.alertTimes.danger){
+      if(!FT.filterWithoutAudio && FT.isPlayAudio && FT.alertTimes.danger){
         audioPlay(); // 播放音频
       }
-      w.filterWithoutAudio = false; // 判断音频是否播放完成，分离 isBet
+      FT.filterWithoutAudio = false; // 判断音频是否播放完成，分离 isBet
       return {
         nodeStr_index: nodeStr_index.length?nodeStr_index:no_data,
         nodeStr_ttg: nodeStr_ttg.length?nodeStr_ttg:no_data
@@ -308,14 +307,14 @@
 
     /* 方法：绑定投注事件 */
     function bindBet(callback) {
-      const s_jzPayAmount = s_bet.querySelector('#s_jzPayAmount');
-      const s_jzRebatePoint = s_bet.querySelector('#s_jzRebatePoint');
-      const s_hgERebatePoint = s_bet.querySelector('#s_hgERebatePoint');
-      const s_hgARebatePoint = s_bet.querySelector('#s_hgARebatePoint');
-      const s_refreshFreq = s_bet.querySelector('#s_refreshFreq');
-      const s_hightBenefitPoint = s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = s_bet.querySelector('#s_middleBenefitPoint');
-      const s_bet_ensure = s_bet.querySelector('button');
+      const s_jzPayAmount = FT.s_bet.querySelector('#s_jzPayAmount');
+      const s_jzRebatePoint = FT.s_bet.querySelector('#s_jzRebatePoint');
+      const s_hgERebatePoint = FT.s_bet.querySelector('#s_hgERebatePoint');
+      const s_hgARebatePoint = FT.s_bet.querySelector('#s_hgARebatePoint');
+      const s_refreshFreq = FT.s_bet.querySelector('#s_refreshFreq');
+      const s_hightBenefitPoint = FT.s_bet.querySelector('#s_hightBenefitPoint');
+      const s_middleBenefitPoint = FT.s_bet.querySelector('#s_middleBenefitPoint');
+      const s_bet_ensure = FT.s_bet.querySelector('button');
 
       s_bet_ensure.addEventListener('click', (e) => {
         isFirstTimeInitBet = false;
@@ -325,14 +324,14 @@
           hgERebatePoint: s_hgERebatePoint.value.trim(),
           hgARebatePoint: s_hgARebatePoint.value.trim(),
         };
-        w.s_bet.querySelector('#s_hightBenefitPoint').nowValue = s_hightBenefitPoint.value.trim();
-        w.s_bet.querySelector('#s_middleBenefitPoint').nowValue = s_middleBenefitPoint.value.trim();
+        FT.s_bet.querySelector('#s_hightBenefitPoint').nowValue = s_hightBenefitPoint.value.trim();
+        FT.s_bet.querySelector('#s_middleBenefitPoint').nowValue = s_middleBenefitPoint.value.trim();
         const refreshFreq = s_refreshFreq.value;
         if (!getValidBet({ ...betObj, refreshFreq })) {
           return;
         }
         if (Number(s_refreshFreq.value) >= 1) {
-          w.refreshFreqTime = Math.ceil(Number(s_refreshFreq.value));
+          FT.refreshFreqTime = Math.ceil(Number(s_refreshFreq.value));
         }
         callback(betObj);
       })
@@ -347,11 +346,11 @@
 
     /* 方法：初始化 投注 */
     function initBet(params) {
-      const s_jzPayAmount = s_bet.querySelector('#s_jzPayAmount');
-      const s_jzRebatePoint = s_bet.querySelector('#s_jzRebatePoint');
-      const s_hgERebatePoint = s_bet.querySelector('#s_hgERebatePoint');
-      const s_hgARebatePoint = s_bet.querySelector('#s_hgARebatePoint');
-      const s_refreshFreq = s_bet.querySelector('#s_refreshFreq');
+      const s_jzPayAmount = FT.s_bet.querySelector('#s_jzPayAmount');
+      const s_jzRebatePoint = FT.s_bet.querySelector('#s_jzRebatePoint');
+      const s_hgERebatePoint = FT.s_bet.querySelector('#s_hgERebatePoint');
+      const s_hgARebatePoint = FT.s_bet.querySelector('#s_hgARebatePoint');
+      const s_refreshFreq = FT.s_bet.querySelector('#s_refreshFreq');
       s_jzPayAmount.value = params.jzPayAmount;
       s_jzRebatePoint.value = params.jzRebatePoint;
       s_hgERebatePoint.value = params.hgERebatePoint;
@@ -361,16 +360,16 @@
 
     /* 方法：初始化 投注的定值 */
     function initBetConst() {
-      const s_hightBenefitPoint = s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = s_bet.querySelector('#s_middleBenefitPoint');
-      s_middleBenefitPoint.value = w.middleBenefitPoint;
-      s_hightBenefitPoint.value = w.hightBenefitPoint;
+      const s_hightBenefitPoint = FT.s_bet.querySelector('#s_hightBenefitPoint');
+      const s_middleBenefitPoint = FT.s_bet.querySelector('#s_middleBenefitPoint');
+      s_middleBenefitPoint.value = FT.middleBenefitPoint;
+      s_hightBenefitPoint.value = FT.hightBenefitPoint;
     }
 
     /* 方法：bet 校验 */
     function getValidBet(params) {
-      const hightBenefitPoint = w.s_bet.querySelector('#s_hightBenefitPoint').nowValue || w.hightBenefitPoint;
-      const middleBenefitPoint = w.s_bet.querySelector('#s_middleBenefitPoint').nowValue || w.middleBenefitPoint;
+      const hightBenefitPoint = FT.s_bet.querySelector('#s_hightBenefitPoint').nowValue || FT.hightBenefitPoint;
+      const middleBenefitPoint = FT.s_bet.querySelector('#s_middleBenefitPoint').nowValue || FT.middleBenefitPoint;
       const validBetObj = {
         jzPayAmount: Number(params.jzPayAmount),
         jzRebatePoint: Number(params.jzRebatePoint),
@@ -421,7 +420,7 @@
       const s_type = s_filter.querySelector('#s_type')
       const s_level = s_filter.querySelector('#s_level')
       const s_team = s_filter.querySelector('#s_team')
-      w.filter_ensureNode.addEventListener('click', (e) => {
+      FT.filter_ensureNode.addEventListener('click', (e) => {
         callback({
           type: s_type.value.trim(),
           level: s_level.value.trim(),
@@ -433,7 +432,7 @@
     /* 方法：筛选处理---点击按钮触发 */
     function filterAction(filter_params = {}) {
       let { type, level, team } = filter_params;
-      const nodeStrList = generateListStr(listData_index, listData_ttg, (ele) => {
+      const nodeStrList = generateListStr(FT.listData_index, FT.listData_ttg, (ele) => {
         const typeCondition = !(type && type.trim()) || (ele.competitionType.includes(type));
         const levelCondition = !(level && level.trim()) || (ele.level.includes(level));
         const teamCondition = !(team && team.trim()) || (ele.teamNameH.includes(team) || ele.teamNameA.includes(team));
@@ -450,15 +449,15 @@
 
     /* 方法：refresh start */
     function refreshList_start(params) {
-      clock = setInterval(() => {
+      FT.clock = setInterval(() => {
         getData(params);
-      }, refreshFreqTime * 1000);
+      }, FT.refreshFreqTime * 1000);
     }
 
     /* 方法：refresh end */
     function refreshList_end() {
-      clearInterval(clock);
-      clock = null;
+      clearInterval(FT.clock);
+      FT.clock = null;
     }
 
     /* 方法：获取数据 */
@@ -502,11 +501,11 @@
         url: getCurrentUrl() + api_url,
         data
       }).then(res => {
-        w.response = res;
-        w.listData_index = res.data;
-        w.listData_ttg = res.ttgData;
-        w.filter_ensureNode.click();
-        if (isFirstTimeInitBet) {
+        FT.response = res;
+        FT.listData_index = res.data;
+        FT.listData_ttg = res.ttgData;
+        FT.filter_ensureNode.click();
+        if (FT.isFirstTimeInitBet) {
           const bet_params = {
             jzPayAmount: res.jzPayAmount,
             jzRebatePoint: res.jzRebatePoint,
@@ -514,15 +513,15 @@
             hgARebatePoint: res.hgARebatePoint,
             refreshFreq: res.refreshFreq,
           };
-          w.refreshFreq = res.refreshFreq;
+          FT.refreshFreq = res.refreshFreq;
           initBet(bet_params);
           refreshList_end();
           refreshList_start(bet_params);
           // 每次请求重置
-          w.isFirstTimeInitBet = false;
+          FT.isFirstTimeInitBet = false;
         }
         // 每次请求将提醒次数清空
-        w.alertTimes = {
+        FT.alertTimes = {
           warning: 0,
           danger: 0,
         };
@@ -553,27 +552,27 @@
       const url_getData = w.API_URL && w.API_URL.getData;
 
       setTimeout(() => {
-        w.response = res;
-        w.listData_index = res.data;
-        w.listData_ttg = res.ttgData;
-        w.filter_ensureNode.click();
-        if (isFirstTimeInitBet) {
+        FT.response = w.mock.res;
+        FT.listData_index = w.mock.res.data;
+        FT.listData_ttg = w.mock.res.ttgData;
+        FT.filter_ensureNode.click();
+        if (FT.isFirstTimeInitBet) {
           const bet_params = {
-            jzPayAmount: res.jzPayAmount,
-            jzRebatePoint: res.jzRebatePoint,
-            hgERebatePoint: res.hgERebatePoint,
-            hgARebatePoint: res.hgARebatePoint,
-            refreshFreq: res.refreshFreq,
+            jzPayAmount: w.mock.res.jzPayAmount,
+            jzRebatePoint: w.mock.res.jzRebatePoint,
+            hgERebatePoint: w.mock.res.hgERebatePoint,
+            hgARebatePoint: w.mock.res.hgARebatePoint,
+            refreshFreq: w.mock.res.refreshFreq,
           };
-          w.refreshFreqTime = res.refreshFreq;
+          FT.refreshFreqTime = w.mock.res.refreshFreq;
           initBet(bet_params);
           refreshList_end();
           refreshList_start(bet_params);
           // 每次请求重置
-          w.isFirstTimeInitBet = false;
+          FT.isFirstTimeInitBet = false;
         }
         // 每次请求将提醒次数清空
-        w.alertTimes = {
+        FT.alertTimes = {
           warning: 0,
           danger: 0,
         };
@@ -582,19 +581,19 @@
 
     /* 方法：播放音频 */
     function audioPlay() {
-      w.audio_alert.pause();
-      w.audio_alert.play();
+      FT.audio_alert.pause();
+      FT.audio_alert.play();
     }
 
     function audioClose() {
-      w.audio_alert.pause();
+      FT.audio_alert.pause();
     }
 
     /* 方法：预警弹窗 */
     function audioAlert() {
-      w.mesNode.classList.add('show');
-      w.mesContentNode.innerText = '是否开启预警提醒？';
-      w.mesCallback = () => {
+      FT.mesNode.classList.add('show');
+      FT.mesContentNode.innerText = '是否开启预警提醒？';
+      FT.mesCallback = () => {
         d.querySelector('#s_audio_select').click();
       };
       pageScroll(false);
@@ -603,8 +602,8 @@
     function bindSwitchAudio() {
       const s_audio_select = d.querySelector('#s_audio_select');
       s_audio_select.addEventListener('click', function (e) {
-        w.isPlayAudio = !w.isPlayAudio;
-        if (isPlayAudio) {
+        FT.isPlayAudio = !FT.isPlayAudio;
+        if (FT.isPlayAudio) {
           this.classList.add('active');
           audioPlay();
         } else {
@@ -623,22 +622,23 @@
     function bindTabs() {
       const s_tabs = d.querySelector('#s_tabsBox');
       const s_lis = s_tabs.querySelectorAll('li');
-      const s_table_index = d.querySelector('#s_table_index');
-      const s_table_ttg = d.querySelector('#s_table_ttg');
+      const s_tab_index = d.querySelector('#s_tab_index');
+      const s_tab_ttg = d.querySelector('#s_tab_ttg');
       s_lis.forEach((ele) => {
         ele.addEventListener('click', function (e) {
-          if(this.dataset['index'] === w.showTableName){
+          console.log(FT.showTabName)
+          if(this.dataset['tab'] === FT.showTabName){
             return false;
           }
           s_lis.forEach((ele_inner) => {
             ele_inner.classList.remove('active');
-            w.showTableName = this.dataset['index'];
+            FT.showTabName = this.dataset['tab'];
           })
 
           this.classList.add('active');
           
-          s_table_index.classList.toggle('hide');
-          s_table_ttg.classList.toggle('hide');
+          s_tab_index.classList.toggle('hide');
+          s_tab_ttg.classList.toggle('hide');
         })
       })
     }
@@ -647,14 +647,14 @@
     function bindShowAllBet() {
       const s_showAllBet = d.querySelector('#s_showAllBet');
       s_showAllBet.addEventListener('click', function (e) {
-        w.isShowAllBet = !w.isShowAllBet;
-        if(w.isShowAllBet){
+        FT.isShowAllBet = !FT.isShowAllBet;
+        if(FT.isShowAllBet){
           this.classList.add('active');
         } else{
           this.classList.remove('active');
         }
-        w.filterWithoutAudio = true;
-        w.filter_ensureNode.click();
+        FT.filterWithoutAudio = true;
+        FT.filter_ensureNode.click();
       })  
     } 
 
@@ -666,14 +666,14 @@
         ele.addEventListener('click', function (e) {
           const index = this.dataset['index'];
           const calcId = this.dataset['calcId'];
-          listData_index[index].isBet  = listData_index[index].isBet * -1;
+          FT.listData_index[index].isBet  = FT.listData_index[index].isBet * -1;
           this.classList.toggle('active'); // 放在 callback 外面有动画过渡
           changeBlockBetStatus({ // 修改比赛投注状态
-            optType: listData_index[index].isBet,
+            optType: FT.listData_index[index].isBet,
             hiddenCalcIds: [calcId]
           }, () => {
-            w.filterWithoutAudio = true;
-            w.filter_ensureNode.click();
+            FT.filterWithoutAudio = true;
+            FT.filter_ensureNode.click();
           });
         })
       })
@@ -682,14 +682,14 @@
         ele.addEventListener('click', function (e) {
           const index = this.dataset['index'];
           const calcId = this.dataset['calcId'];
-          listData_ttg[index].isBet  = listData_ttg[index].isBet * -1;
+          FT.listData_ttg[index].isBet  = FT.listData_ttg[index].isBet * -1;
           this.classList.toggle('active');  // 放在 callback 外面有动画过渡
           changeBlockBetStatus({ // 修改比赛投注状态
-            optType: listData_ttg[index].isBet,
+            optType: FT.listData_ttg[index].isBet,
             hiddenCalcIds: [calcId]
           }, () => {
-            w.filter_ensureNode.click();
-            w.filterWithoutAudio = true;
+            FT.filter_ensureNode.click();
+            FT.filterWithoutAudio = true;
           });
         })
       })
@@ -727,7 +727,7 @@
         url: getCurrentUrl() + api_url,
         data
       }).then(res => {
-        w.hideBetList = res.hiddenCalcIds;
+        FT.hideBetList = res.hiddenCalcIds;
         callback();
       }).catch(err => {
         console.log("请求失败==>" + err);
@@ -755,7 +755,7 @@
       const api_url = w.API_URL && w.API_URL.staticValues;
 
       setTimeout(() => {
-        w.hideBetList = StatusData.hiddenCalcIds;
+        FT.hideBetList = w.mock.StatusData.hiddenCalcIds;
         callback();
       }, .5 * 1000);
     }
@@ -769,8 +769,8 @@
         ele.addEventListener('click', function (e) {
           this.classList.toggle('active');
           const index = this.dataset['index'];
-          showObj = listData_index[index];
-          dialogNode.classList.add('show');
+          showObj = FT.listData_index[index];
+          FT.dialogNode.classList.add('show');
           initDialogContent(showObj);
           d.querySelector('html').classList.add('no-scroll');
           d.querySelector('body').classList.add('no-scroll');
@@ -781,8 +781,8 @@
         ele.addEventListener('click', function (e) {
           this.classList.toggle('active');
           const index = this.dataset['index'];
-          showObj = listData_ttg[index];
-          dialogNode.classList.add('show');
+          showObj = FT.listData_ttg[index];
+          FT.dialogNode.classList.add('show');
           initDialogContent(showObj);
           d.querySelector('html').classList.add('no-scroll');
           d.querySelector('body').classList.add('no-scroll');
@@ -828,14 +828,14 @@
 
       setTimeout(() => {
         console.log("api 请求成功==>");
-        callback_calculator(w.calculatorData, outputNodeList);
+        callback_calculator(w.mock.calculatorData, outputNodeList);
       }, .5 * 1000);
     }
 
     /* 方法：获取 dialog 数据用于计算请求 */
     function getDialogDataForCalculator() {
-      const inputNodeList = dialogContentNode.querySelectorAll('input[data-input-key]');      
-      const outputNodeList = dialogContentNode.querySelectorAll('input[data-output-key]');
+      const inputNodeList = FT.dialogContentNode.querySelectorAll('input[data-input-key]');      
+      const outputNodeList = FT.dialogContentNode.querySelectorAll('input[data-output-key]');
       const inputValueList = {};
       inputNodeList.forEach((ele) => {
         const key = ele.dataset['inputKey']; // 请求的input 框
@@ -849,13 +849,13 @@
       let res_params = {
         jzPayAmount: inputValueList.jzPayAmount,
         isUserCalc: true,
-        calcId: w.dialogData.calcId,
+        calcId: FT.dialogData.calcId,
         userCalcReq: {}
       };
 
-      if(showTableName === 'index'){
+      if(FT.showTabName === 'index'){
         // 欧赔 或者 亚赔
-        if(w.dialogData.hgPDisplay == ''){ // 欧赔
+        if(FT.dialogData.hgPDisplay == ''){ // 欧赔
           console.log('欧赔')
           res_params.userCalcReq = {
             crownERate: {
@@ -896,7 +896,7 @@
             rateRW: inputValueList.jzWRate,
           }
         }
-      } else if(showTableName === 'ttg'){
+      } else if(FT.showTabName === 'ttg'){
         res_params.userCalcReq = {
           crownBSRate: {
             point: inputValueList.hgPValue, // hgPValue
@@ -923,7 +923,7 @@
       const invaildInputObj = {
         length: 0
       };
-      const inputNodeList = dialogContentNode.querySelectorAll('input[data-input-key]');      
+      const inputNodeList = FT.dialogContentNode.querySelectorAll('input[data-input-key]');      
       inputNodeList.forEach((ele) => {
         // ele.classList.remove('danger');
         if(ele.dataset['inputKey'] === 'jzPayAmount' && !ele.value.trim()){
@@ -942,7 +942,7 @@
         const key = ele.dataset['outputKey'];
         keyList[key] = ele;
       })
-      if(w.showTableName === 'index'){
+      if(FT.showTabName === 'index'){
         const ele = res.data[0];
         keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
         keyList['jzWPayAmount'].value = ele.jzWPayAmount>0? ele.jzWPayAmount : '';
@@ -951,7 +951,7 @@
         keyList['hgDPayAmount'].value = ele.hgDPayAmount>0? ele.hgDPayAmount : '';
         keyList['hgLPayAmount'].value = ele.hgLPayAmount>0? ele.hgLPayAmount : '';
         keyList['totalBenefitAmount'].value = ele.totalBenefitAmount!=0? ele.totalBenefitAmount : '';
-      } else if(w.showTableName === 'ttg'){
+      } else if(FT.showTabName === 'ttg'){
         const ele = res.ttgData[0];
         keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
         keyList['jzS0PayAmount'].value = ele.jzS0PayAmount>0? ele.jzS0PayAmount : '';
@@ -969,9 +969,9 @@
     /* 方法：强制刷新数据 */  
     function bindForceRefresh() {
       d.querySelector('#s_forceRefresh').addEventListener('click',function (e) {
-        w.mesNode.classList.add('show');
-        w.mesContentNode.innerText = '确定强制刷新后台数据吗？';
-        w.mesCallback = forceRefreshAction;
+        FT.mesNode.classList.add('show');
+        FT.mesContentNode.innerText = '确定强制刷新后台数据吗？';
+        FT.mesCallback = forceRefreshAction;
         pageScroll(false);
       })
     }
@@ -987,7 +987,7 @@
     /* 方法：message 取消 */  
     function bindCancleMes() {
       d.querySelector('#s_cancelMes').addEventListener('click',function (e) {
-        w.mesNode.classList.remove('show');
+        FT.mesNode.classList.remove('show');
         pageScroll(true);
       })
     }
@@ -995,9 +995,9 @@
     /* 方法：message 确定 */  
     function bindEnsureMes() {
       d.querySelector('#s_ensureMes').addEventListener('click',function (e) {
-        w.mesNode.classList.remove('show');
-        w.mesCallback();
-        w.mesCallback = null; // 执行完置空
+        FT.mesNode.classList.remove('show');
+        FT.mesCallback();
+        FT.mesCallback = null; // 执行完置空
         pageScroll(true);
       })
     }
@@ -1005,9 +1005,9 @@
     /* 方法：dialog 取消 */  
     function bindCancleDialog() {
       d.querySelector('#s_cancelDialog').addEventListener('click',function (e) {
-        w.dialogNode.classList.remove('show');
-        dialogContentNode.innerHTML = '';
-        w.dialogData = null;
+        FT.dialogNode.classList.remove('show');
+        FT.dialogContentNode.innerHTML = '';
+        FT.dialogData = null;
         pageScroll(true);
       })
     }
@@ -1026,10 +1026,10 @@
     }
 
     function initDialogContent(obj) {
-      dialogContentNode.innerHTML = '';
-      const ele = w.dialogData = Object.assign({}, obj);
+      FT.dialogContentNode.innerHTML = '';
+      const ele = FT.dialogData = Object.assign({}, obj);
       let nodeStr = '';
-      if(showTableName === 'index'){
+      if(FT.showTabName === 'index'){
         nodeStr += `
           <div>
             <label>请输入投注金额：
@@ -1117,7 +1117,7 @@
             </div>
           </div>
         `;
-      } else if(showTableName === 'ttg'){
+      } else if(FT.showTabName === 'ttg'){
         nodeStr += `
           <div>
             <label>请输入投注金额：<input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元</label>
@@ -1237,7 +1237,7 @@
         `;
       }
 
-      dialogContentNode.innerHTML = nodeStr;
+      FT.dialogContentNode.innerHTML = nodeStr;
     }
 
     /* 方法：页面是否可以滚动 */
@@ -1269,7 +1269,7 @@
         // 开始拖拽
         title.addEventListener('mousedown', function (e) {
           const boxW = box.offsetWidth;
-          w.dragBox = {
+          FT.dragBox = {
             node: box,
             left: box.offsetLeft,
             top: box.offsetTop
@@ -1309,11 +1309,11 @@
 
     /* 方法：恢复拖拽 */
     function resetDrag() {
-      w.dragBox.node && (w.dragBox.node.style.left = w.dragBox.left + 'px');
-      w.dragBox.node && (w.dragBox.node.style.top = w.dragBox.top + 'px');
+      FT.dragBox.node && (FT.dragBox.node.style.left = FT.dragBox.left + 'px');
+      FT.dragBox.node && (FT.dragBox.node.style.top = FT.dragBox.top + 'px');
     }
   }
-)(window, document);
+)(window, window.FT, document);
 
 
 
