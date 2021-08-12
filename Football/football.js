@@ -859,7 +859,7 @@
           console.log('欧赔')
           res_params.userCalcReq = {
             crownERate: {
-              rateD: inputValueList.hgDRate,
+              rateD: inputValueList.hgPValue,
               rateL: inputValueList.hgLRate,
               rateW: inputValueList.hgWRate
             }
@@ -1026,7 +1026,6 @@
     }
 
     function initDialogContent(obj) {
-      console.log(obj)
       dialogContentNode.innerHTML = '';
       const ele = w.dialogData = Object.assign({}, obj);
       let nodeStr = '';
@@ -1081,7 +1080,7 @@
                     <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
                   </td>
                   <td width="16%">
-                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPValue} value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
+                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
                   </td>
                   <td width="12%">
                     <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
