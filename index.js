@@ -20,7 +20,7 @@ function initJS() {
   const jsFileList = [
     './JS/utils.js',
     './JS/api.js',
-    './Football/football.js',
+    // './Football/football.js',
     './BD/BD.js'
   ];
 
@@ -36,7 +36,9 @@ function initJSON() {
   const dataFileList = [
     "./lib/data/FootballData.js",
     "./lib/data/CalculatorData.js",
-    "./lib/data/StatusData.js"
+    "./lib/data/StatusData.js",
+    "./lib/data/FootballBDData.js",
+    "./lib/data/BDAddAlarmData.js",
   ]
   dataFileList.forEach((ele) => {
     const script = document.createElement('script');

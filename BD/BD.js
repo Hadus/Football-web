@@ -3,11 +3,9 @@
     const s_content_box = d.querySelector('#' + contentIDStr);
     Object.assign(G, {
       tableNode_index: s_content_box.querySelector('#s_tab_index'), // 列表的 table
-      tableNode_ttg: s_content_box.querySelector('#s_tab_ttg'), // 列表的 table
       s_bet: s_content_box.querySelector('#s_bet'), // bet
       response: {}, // API返回值
       listData_index: [], // 数据
-      listData_ttg: [], // 数据
       clock: null, // 自动刷新定时器
       refreshFreqTime: 20, // 秒
       isFirstTimeInitBet: true, // 第一次进来界面才会initBet
@@ -37,12 +35,11 @@
         top: 0
       },
     });
-    getData();
+    getFootballBD();
     initBetConst();
     bindBet(betAction);
     bindFilter(filterAction);
     bindSwitchAudio();
-    bindTabs();
     // bindForceRefresh(); // 绑定强制刷新
     bindShowAllBet(); // 绑定显示所有已投注
     bindCancleMes(); // 弹窗-取消mes
@@ -55,27 +52,20 @@
     // audioAlert();
 
     /* 方法：初始化 table */
-    function initTable({ nodeStr_index = '', nodeStr_ttg = '' }) {
+    function initTable({ nodeStr_index = '' }) {
       G.tableNode_index.innerHTML = '';
-      G.tableNode_ttg.innerHTML = '';
       G.tableNode_index.innerHTML = nodeStr_index;
-      G.tableNode_ttg.innerHTML = nodeStr_ttg;
       bindIsBet(); // 绑定每个已投注
       bindCalculator(); // 绑定每个calculator
     }
 
     /* 方法：生成 list 字符串 */
-    function generateListStr(listData_index = [], listData_ttg = [], getFlag_filters) {
+    function generateListStr(listData_index = [], getFlag_filters) {
       let nodeStr_index = '';
-      let nodeStr_ttg = '';
       const no_data = `
         <p class="no-data">No Data.</p>
       `;
       const alert_times_index = {
-        warning: 0,
-        danger: 0
-      };
-      const alert_times_ttg = {
         warning: 0,
         danger: 0
       };
@@ -168,141 +158,18 @@
           `;
         }
       })
-      listData_ttg.forEach((ele, index) => {
-        // 本剧游戏是否投注
-        // -1: 未投注
-        // 1: 已投注
-        ele.isBet =  G.hideBetList.includes(ele.calcId)? 1 : -1;
-        const filterCondition_hasFilter = !getFlag_filters || (getFlag_filters && getFlag_filters(ele));
-        const filterCondition_isBet = !G.isShowAllBet && ele.isBet === 1;
-        const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
-        // 过滤
-        if(filterCondition){
-          let tdClass_totalBenefitPoint = '';
-          // 需要判断 空 或者 0 吗
-          if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red';
-            ele.isBet === -1 && alert_times_ttg.danger++;
-          } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
-            tdClass_totalBenefitPoint = 'tips yellow';
-            ele.isBet === -1 && alert_times_ttg.warning++;
-          }
-          
-          nodeStr_ttg += `
-            <div class="block">
-              <div class="top">
-                <div class="competitionType">
-                  <p>${ele.competitionType}</p>
-                  <span></span>
-                </div>
-                <div class="level">
-                  <span>${ele.level}</span>
-                  <span>${ele.matchTime}</span>
-                </div>
-                <div class="teams">
-                  <span class="team1">${ele.teamNameH}</span>
-                  <span class="icon-vs"></span>
-                  <span class="team2">${ele.teamNameA}</span>
-                </div>
-                <div class="calculator">
-                  <button class="primary small s-calculator-ttg" data-index=${index}>计算</button>
-                </div>
-                <div class="is-bet">
-                  已投注：
-                  <div class="s-is-bet-ttg switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.calcId}>
-                    <div class="switch-handle"></div>
-                  </div>
-                </div>
-              </div>
-              <div class="bot">
-                <table>
-                  <tr class="head">
-                    <th width="44%" colspan="5">
-                      <span>${ele.jzRateType}</span>
-                    </th>
-                    <th width="40%" colspan="3">
-                      <span>${ele.hgRateType}</span>
-                    </th>
-                    <th width="16%" colspan="1">利润</th>
-                  </tr>
-                  <tr>
-                    <td class="bold" width="8%">进球数</td>
-                    <td width="10%">0球</td>
-                    <td width="10%">1球</td>
-                    <td width="10%">2球</td>
-                    <td width="10%">3球</td>
-                    <td width="12%">大球</td>
-                    <td width="12%">盘口</td>
-                    <td width="12%">小球</td>
-                    <td></td>
-                  </tr>
-                  <tr>
-                    <td class="bold">赔  率</td>
-                    <td class="${ele.jzS0Highlight?'red':''}">${ele.jzS0Rate}</td>
-                    <td class="${ele.jzS1Highlight?'red':''}">${ele.jzS1Rate}</td>
-                    <td class="${ele.jzS2Highlight?'red':''}">${ele.jzS2Rate}</td>
-                    <td class="${ele.jzS3Highlight?'red':''}">${ele.jzS3Rate}</td>
-                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}">${ele.hgWRate}</td>
-                    <td class="${''}">${ele.hgPDisplay == ''? ele.hgPValue : ele.hgPDisplay}</td>
-                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}">${ele.hgLRate}</td>
-                    <td class="${tdClass_totalBenefitPoint}">${ele.totalBenefitPoint||''}</td>
-                  </tr>
-                  <tr>
-                    <td class="bold">投  注</td>
-                    <td class="bold">${ele.jzS0PayAmount>0? ele.jzS0PayAmount:''}</td>
-                    <td class="bold">${ele.jzS1PayAmount>0? ele.jzS1PayAmount:''}</td>
-                    <td class="bold">${ele.jzS2PayAmount>0? ele.jzS2PayAmount:''}</td>
-                    <td class="bold">${ele.jzS3PayAmount>0? ele.jzS3PayAmount:''}</td>
-                    <td class="bold">${ele.hgWPayAmount>0? ele.hgWPayAmount:''}</td>
-                    <td class="bold"></td>
-                    <td class="bold"></td>
-                    <td class="bold">${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}</td>
-                  </tr>
-                  <tr>
-                  <td class="bold">中  奖</td>
-                    <td class="gray trend ${ele.changeJzS0Rate&&(ele.changeJzS0Rate>0?'trend-up':'trend-down')}">${ele.jzS0BenefitAmount > 0 ? ele.jzS0BenefitAmount : ''}</td>
-                    <td class="gray trend ${ele.changeJzS1Rate&&(ele.changeJzS1Rate>0?'trend-up':'trend-down')}">${ele.jzS1BenefitAmount > 0 ? ele.jzS1BenefitAmount : ''}</td>
-                    <td class="gray trend ${ele.changeJzS2Rate&&(ele.changeJzS2Rate>0?'trend-up':'trend-down')}">${ele.jzS2BenefitAmount > 0 ? ele.jzS2BenefitAmount : ''}</td>
-                    <td class="gray trend ${ele.changeJzS3Rate&&(ele.changeJzS3Rate>0?'trend-up':'trend-down')}">${ele.jzS3BenefitAmount > 0 ? ele.jzS3BenefitAmount : ''}</td>
-                    <td class="gray">${ele.hgWBenefitAmount > 0 ? ele.hgWBenefitAmount : ''}</td>
-                    <td class="gray"></td>
-                    <td class="gray"></td>
-                    <td class="gray"></td>
-                  </tr>
-                </table>
-              </div>
-            </div>
-          `;
-        }
 
-      })
       G.alertTimes = {
-        warning: alert_times_index.warning + alert_times_ttg.warning,
-        danger: alert_times_index.danger + alert_times_ttg.danger,
+        warning: alert_times_index.warning,
+        danger: alert_times_index.danger,
       }
 
-      const s_tabs = s_content_box.querySelector('#s_tabsBox');
-      const s_lis = s_tabs.querySelectorAll('li');
-      s_lis[0].classList.remove('tips','red','yellow');
-      s_lis[1].classList.remove('tips','red','yellow');
-
-      if(alert_times_index.danger > 0){
-        s_lis[0].classList.add('tips','red');
-      } else if(alert_times_index.warning > 0){
-        s_lis[0].classList.add('tips','yellow');
-      }
-      if(alert_times_ttg.danger > 0){
-        s_lis[1].classList.add('tips','red');
-      } else if(alert_times_ttg.warning > 0){
-        s_lis[1].classList.add('tips','yellow');
-      }
       if(!G.filterWithoutAudio && G.isPlayAudio && G.alertTimes.danger){
         audioPlay(); // 播放音频
       }
       G.filterWithoutAudio = false; // 判断音频是否播放完成，分离 isBet
       return {
         nodeStr_index: nodeStr_index.length?nodeStr_index:no_data,
-        nodeStr_ttg: nodeStr_ttg.length?nodeStr_ttg:no_data
       };
     }
 
@@ -340,7 +207,7 @@
 
     /* 方法：投注处理---点击按钮触发 */
     function betAction(bet_params) {
-      getData(bet_params);
+      getFootballBD(bet_params);
       refreshList_end();
       refreshList_start(bet_params);
     }
@@ -433,7 +300,7 @@
     /* 方法：筛选处理---点击按钮触发 */
     function filterAction(filter_params = {}) {
       let { type, level, team } = filter_params;
-      const nodeStrList = generateListStr(G.listData_index, G.listData_ttg, (ele) => {
+      const nodeStrList = generateListStr(G.listData_index, (ele) => {
         const typeCondition = !(type && type.trim()) || (ele.competitionType.includes(type));
         const levelCondition = !(level && level.trim()) || (ele.level.includes(level));
         const teamCondition = !(team && team.trim()) || (ele.teamNameH.includes(team) || ele.teamNameA.includes(team));
@@ -451,7 +318,7 @@
     /* 方法：refresh start */
     function refreshList_start(params) {
       G.clock = setInterval(() => {
-        getData(params);
+        getFootballBD(params);
       }, G.refreshFreqTime * 1000);
     }
 
@@ -462,22 +329,22 @@
     }
 
     /* 方法：获取数据 */
-    function getData(bet_params) {
+    function getFootballBD(bet_params) {
       changeBlockBetStatus({ // 修改比赛投注状态
         optType: 0,
         hiddenCalcIds: []
       }, () => {
         // api：get 列表数据--静态调用 _file，API 调用 _api
         if (!w.location.host) {
-          getData_file(bet_params);
+          getFootballBD_file(bet_params);
         } else {
-          getData_api(bet_params);
+          getFootballBD_api(bet_params);
         }
       });
     }
 
     /* 方法：api 获取数据 */
-    function getData_api(bet_params) {
+    function getFootballBD_api(bet_params) {
       // api：get 列表数据
       let data = bet_params && {
         jzPayAmount: bet_params.jzPayAmount,
@@ -495,7 +362,7 @@
 
       // 请求之前先停止 audio
       audioClose();
-      const api_url = w.API_URL && w.API_URL.getData;
+      const api_url = w.API_URL && w.API_URL.footballBD;
 
       ajaxPromise({
         type: 'post',
@@ -504,7 +371,6 @@
       }).then(res => {
         G.response = res;
         G.listData_index = res.data;
-        G.listData_ttg = res.ttgData;
         G.filter_ensureNode.click();
         if (G.isFirstTimeInitBet) {
           const bet_params = {
@@ -533,7 +399,7 @@
     }
 
     /* 方法：本地 获取数据 */
-    function getData_file(bet_params) {
+    function getFootballBD_file(bet_params) {
       // api：get 列表数据
       let data = bet_params && {
         jzPayAmount: bet_params.jzPayAmount,
@@ -550,12 +416,11 @@
       };
       // 请求之前先停止 audio
       audioClose();
-      const url_getData = w.API_URL && w.API_URL.getData;
+      const api_url = w.API_URL && w.API_URL.footballBD;
 
       setTimeout(() => {
         G.response = w.mock.res;
         G.listData_index = w.mock.res.data;
-        G.listData_ttg = w.mock.res.ttgData;
         G.filter_ensureNode.click();
         if (G.isFirstTimeInitBet) {
           const bet_params = {
@@ -618,27 +483,6 @@
       return w.location.origin + '/';
     }
 
-    /* 方法：绑定 tabs */
-    function bindTabs() {
-      const s_tab_List = s_content_box.querySelectorAll('#s_tabsBox>li');
-      const s_tabContent_list = s_content_box.querySelectorAll('div>.table');
-      s_tab_List.forEach((ele, index) => {
-        ele.addEventListener('click', function (e) {
-          const tabName = ele.dataset['tab'];
-          if(tabName === G.showTabName){
-            return false;
-          }
-          s_tabContent_list.forEach((ele_inner, index_inner) => {
-            ele_inner.classList.remove('show');
-            s_tab_List[index_inner].classList.remove('active');
-          })
-          s_tabContent_list[index].classList.add('show');
-          ele.classList.add('active');
-          G.showTabName = tabName;
-        })
-      })
-    }
-
     /* 方法：绑定显示所有已投注 */
     function bindShowAllBet() {
       const s_showAllBet = s_content_box.querySelector('#s_showAllBet');
@@ -657,7 +501,6 @@
     /* 方法：绑定单个已投注 */
     function bindIsBet() {
       const s_isBet_list_index = d.querySelectorAll('.s-is-bet-index');
-      const s_isBet_list_ttg = d.querySelectorAll('.s-is-bet-ttg');
       s_isBet_list_index.forEach((ele) => {
         ele.addEventListener('click', function (e) {
           const index = this.dataset['index'];
@@ -670,22 +513,6 @@
           }, () => {
             G.filterWithoutAudio = true;
             G.filter_ensureNode.click();
-          });
-        })
-      })
-
-      s_isBet_list_ttg.forEach((ele) => {
-        ele.addEventListener('click', function (e) {
-          const index = this.dataset['index'];
-          const calcId = this.dataset['calcId'];
-          G.listData_ttg[index].isBet  = G.listData_ttg[index].isBet * -1;
-          this.classList.toggle('active');  // 放在 callback 外面有动画过渡
-          changeBlockBetStatus({ // 修改比赛投注状态
-            optType: G.listData_ttg[index].isBet,
-            hiddenCalcIds: [calcId]
-          }, () => {
-            G.filter_ensureNode.click();
-            G.filterWithoutAudio = true;
           });
         })
       })
@@ -759,23 +586,12 @@
     /* 方法：绑定点击某场比赛的计算 */
     function bindCalculator() {
       const s_calculator_list_index = d.querySelectorAll('.s-calculator-index');
-      const s_calculator_list_ttg = d.querySelectorAll('.s-calculator-ttg');
       let showObj = {};
       s_calculator_list_index.forEach((ele) => {
         ele.addEventListener('click', function (e) {
           this.classList.toggle('active');
           const index = this.dataset['index'];
           showObj = G.listData_index[index];
-          G.dialogNode.classList.add('show');
-          initDialogContent(showObj);
-        })
-      })
-
-      s_calculator_list_ttg.forEach((ele) => {
-        ele.addEventListener('click', function (e) {
-          this.classList.toggle('active');
-          const index = this.dataset['index'];
-          showObj = G.listData_ttg[index];
           G.dialogNode.classList.add('show');
           initDialogContent(showObj);
         })
@@ -943,19 +759,6 @@
         keyList['hgDPayAmount'].value = ele.hgDPayAmount>0? ele.hgDPayAmount : '';
         keyList['hgLPayAmount'].value = ele.hgLPayAmount>0? ele.hgLPayAmount : '';
         keyList['totalBenefitAmount'].value = ele.totalBenefitAmount!=0? ele.totalBenefitAmount : '';
-      } else if(G.showTabName === 'ttg'){
-        const ele = res.ttgData[0];
-        keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
-        keyList['jzS0PayAmount'].value = ele.jzS0PayAmount>0? ele.jzS0PayAmount : '';
-        keyList['jzS1PayAmount'].value = ele.jzS1PayAmount>0? ele.jzS1PayAmount : '';
-        keyList['jzS2PayAmount'].value = ele.jzS2PayAmount>0? ele.jzS2PayAmount : '';
-        keyList['jzS3PayAmount'].value = ele.jzS3PayAmount>0? ele.jzS3PayAmount : '';
-        keyList['hgWPayAmount'].value = ele.hgWPayAmount>0? ele.hgWPayAmount : '';
-        keyList['totalBenefitAmount'].value = ele.totalBenefitAmount!=0? ele.totalBenefitAmount : '';
-        keyList['jzS0BenefitAmount'].value = ele.jzS0BenefitAmount>0? ele.jzS0BenefitAmount : '';
-        keyList['jzS1BenefitAmount'].value = ele.jzS1BenefitAmount>0? ele.jzS1BenefitAmount : '';
-        keyList['jzS2BenefitAmount'].value = ele.jzS2BenefitAmount>0? ele.jzS2BenefitAmount : '';
-        keyList['hgWBenefitAmount'].value = ele.hgWBenefitAmount>0? ele.hgWBenefitAmount : '';
       }
     }
     /* 方法：强制刷新数据 */  
@@ -970,7 +773,7 @@
     /* 方法：强制刷新处理---点击按钮触发 */
     function forceRefreshAction(params) {
       console.log('发请求');
-      getData({
+      getFootballBD({
         needFresh: true
       });
     }
@@ -1100,124 +903,6 @@
                   <td class="bold">
                     <input type="number" data-output-key="totalBenefitAmount" disabled value=${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}>
                   </td>
-                </tr>
-              </table>
-            </div>
-          </div>
-        `;
-      } else if(G.showTabName === 'ttg'){
-        nodeStr += `
-          <div>
-            <label>请输入投注金额：<input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元</label>
-          </div>
-          <div class="block">
-            <div class="top">
-              <div class="competitionType">
-                <p>${ele.competitionType}</p>
-                <span></span>
-              </div>
-              <div class="level">
-                <span>${ele.level}</span>
-                <span>${ele.matchTime}</span>
-              </div>
-              <div class="teams">
-                <span class="team1">${ele.teamNameH}</span>
-                <span class="icon-vs"></span>
-                <span class="team2">${ele.teamNameA}</span>
-              </div>
-            </div>
-            <div class="bot">
-              <table>
-                <tr class="head">
-                  <th width="44%" colspan="5">
-                    <span>${ele.jzRateType}</span>
-                  </th>
-                  <th width="40%" colspan="3">
-                    <span>${ele.hgRateType}</span>
-                  </th>
-                  <th width="16%" colspan="1">利润</th>
-                </tr>
-                <tr>
-                  <td class="bold" width="8%">进球数</td>
-                  <td width="10%">0球</td>
-                  <td width="10%">1球</td>
-                  <td width="10%">2球</td>
-                  <td width="10%">3球</td>
-                  <td width="12%">大球</td>
-                  <td width="12%">盘口</td>
-                  <td width="12%">小球</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td class="bold">赔  率</td>
-                  <td>
-                    <input type="number" data-input-key="jzS0Rate" value=${ele.jzS0Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="jzS1Rate" value=${ele.jzS1Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="jzS2Rate" value=${ele.jzS2Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="jzS3Rate" value=${ele.jzS3Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="hgPValue" data-input-res=${ele.hgPValue} disabled value=${ele.hgPDisplay == ''? ele.hgPValue : ele.hgPDisplay}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="bold">投  注</td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS0PayAmount" disabled value=${ele.jzS0PayAmount>0? ele.jzS0PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS1PayAmount" disabled value=${ele.jzS1PayAmount>0? ele.jzS1PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS2PayAmount" disabled value=${ele.jzS2PayAmount>0? ele.jzS2PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS3PayAmount" disabled value=${ele.jzS3PayAmount>0? ele.jzS3PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgWPayAmount" disabled value=${ele.hgWPayAmount>0? ele.hgWPayAmount:''}>
-                  </td>
-                  <td class="bold"></td>
-                  <td class="bold"></td>
-                  <td class="bold">
-                    <input type="number" data-output-key="totalBenefitAmount" disabled value=${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="bold">中  奖</td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS0BenefitAmount" disabled value=${ele.jzS0BenefitAmount > 0 ? ele.jzS0BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS1BenefitAmount" disabled value=${ele.jzS1BenefitAmount > 0 ? ele.jzS1BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS2BenefitAmount" disabled value=${ele.jzS2BenefitAmount > 0 ? ele.jzS2BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS3BenefitAmount" disabled value=${ele.jzS3BenefitAmount > 0 ? ele.jzS3BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="text" data-output-key="hgWBenefitAmount" disabled value=${ele.hgWBenefitAmount > 0 ? ele.hgWBenefitAmount : ''}>
-                  </td>
-                  <td class="gray"></td>
-                  <td class="gray"></td>
-                  <td class="gray"></td>
                 </tr>
               </table>
             </div>
