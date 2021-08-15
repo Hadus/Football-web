@@ -20,7 +20,7 @@ function initJS() {
   const jsFileList = [
     './JS/utils.js',
     './JS/api.js',
-    // './Football/football.js',
+    './Football/football.js',
     './BD/BD.js'
   ];
 

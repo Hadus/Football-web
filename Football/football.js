@@ -550,7 +550,7 @@
       };
       // 请求之前先停止 audio
       audioClose();
-      const api_url = w.API_URL && w.API_URL.getData;
+      const url_getData = w.API_URL && w.API_URL.getData;
 
       setTimeout(() => {
         G.response = w.mock.res;

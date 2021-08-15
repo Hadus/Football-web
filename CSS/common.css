@@ -137,19 +137,19 @@ button.primary.small {
   min-width: 60px;
 }
 
-button.susscess {
+button.success {
   color: #fff;
   background-color: #67c23a;
   border-color: #67c23a;
 }
 
-button.susscess:active {
+button.success:active {
   background: #5daf34;
   border-color: #5daf34;
   color: #fff;
 }
 
-button.susscess:hover {
+button.success:hover {
   background: #85ce61;
   border-color: #85ce61;
   color: #fff;
@@ -173,7 +173,7 @@ button.danger:hover {
   color: #fff;
 }
 
-a{
+a {
   cursor: pointer;
   color: inherit;
   text-decoration: none;

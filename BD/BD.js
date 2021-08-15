@@ -3,16 +3,13 @@
     const s_content_box = d.querySelector('#' + contentIDStr);
     Object.assign(G, {
       tableNode_index: s_content_box.querySelector('#s_tab_index'), // 列表的 table
-      s_bet: s_content_box.querySelector('#s_bet'), // bet
       response: {}, // API返回值
       listData_index: [], // 数据
       clock: null, // 自动刷新定时器
-      refreshFreqTime: 20, // 秒
+      refreshFreqTime: 80, // 秒
       isFirstTimeInitBet: true, // 第一次进来界面才会initBet
       getFlag_filters: null, // 过滤条件
       filter_ensureNode: s_content_box.querySelector('#s_filter').querySelector('button'),
-      middleBenefitPoint: '1.0',
-      hightBenefitPoint: '2.0',
       audio_alert: new Audio(w.ALERT_AUDIO_URL || ''), // 音频对象
       alertTimes: { // 需要报警的次数
         warning: 0,
@@ -36,8 +33,6 @@
       },
     });
     getFootballBD();
-    initBetConst();
-    bindBet(betAction);
     bindFilter(filterAction);
     bindSwitchAudio();
     // bindForceRefresh(); // 绑定强制刷新
@@ -69,11 +64,6 @@
         warning: 0,
         danger: 0
       };
-
-      const s_hightBenefitPoint = G.s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = G.s_bet.querySelector('#s_middleBenefitPoint');
-      const hightBenefitPoint = s_hightBenefitPoint.nowValue || s_hightBenefitPoint.value;
-      const middleBenefitPoint = s_middleBenefitPoint.nowValue || s_middleBenefitPoint.value;
       listData_index.forEach((ele, index) => {
         // 本剧游戏是否投注
         // -1: 未投注
@@ -86,24 +76,15 @@
         if(filterCondition){
           const tdClass_jzPValue = ele.jzPValue == 0 ? '' : (ele.jzPValue < 0 ? 'green' : 'red');
           let tdClass_totalBenefitPoint = '';
-          // 需要判断 空 或者 0 吗
-          if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red';
-            ele.isBet === -1 && alert_times_index.danger++;
-          } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
-            tdClass_totalBenefitPoint = 'tips yellow';
-            ele.isBet === -1 && alert_times_index.warning++;
-          }
     
           nodeStr_index += `
             <div class="block">
               <div class="top">
                 <div class="competitionType">
-                  <p>${ele.competitionType}</p>
+                  <p>${ele.leagueName}</p>
                   <span></span>
                 </div>
                 <div class="level">
-                  <span>${ele.level}</span>
                   <span>${ele.matchTime}</span>
                 </div>
                 <div class="teams">
@@ -112,11 +93,11 @@
                   <span class="team2">${ele.teamNameA}</span>
                 </div>
                 <div class="calculator">
-                  <button class="primary small s-calculator-index" data-index=${index}>计算</button>
+                  <button class="primary s-calculator-index" data-index=${index}>告警设置</button>
                 </div>
                 <div class="is-bet">
                   已投注：
-                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.calcId}>
+                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
                 </div>
@@ -124,33 +105,31 @@
               <div class="bot">
                 <table>
                   <tr class="head">
-                    <th width="44%" colspan="4">
-                      <span>${ele.jzRateType}</span>
+                    <th width="44%" colspan="3">
+                      <span>初盘</span>
                     </th>
                     <th width="40%" colspan="3">
-                      <span>${ele.hgRateType}</span>
+                      <span>既盘</span>
                     </th>
-                    <th width="16%" colspan="1">利润</th>
+                    <th width="16%" colspan="1">报警</th>
                   </tr>
                   <tr>
-                    <td class="trend ${tdClass_jzPValue}" width="6%">${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}</td>
-                    <td class="trend ${ele.changeJzWRate&&(ele.changeJzWRate>0?'trend-up':'trend-down')} ${ele.jzWHighlight?'red':''}" width="16%">${ele.jzWRate}</td>
-                    <td class="trend ${ele.changeJzDRate&&(ele.changeJzDRate>0?'trend-up':'trend-down')} ${ele.jzDHighlight?'red':''}" width="10%">${ele.jzDRate}</td>
-                    <td class="trend ${ele.changeJzLRate&&(ele.changeJzLRate>0?'trend-down':'trend-up')} ${ele.jzLHighlight?'red':''}" width="11%">${ele.jzLRate}</td>
-                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}" width="13%">${ele.hgWRate}</td>
-                    <td class="trend ${ele.changeHgDRate&&(ele.changeHgDRate>0?'trend-up':'trend-down')} ${ele.hgDHighlight?'red':''}" width="16%">${ele.hgPDisplay == ''? ele.hgDRate : ele.hgPDisplay}</td>
-                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}" width="12%">${ele.hgLRate}</td>
-                    <td class="${tdClass_totalBenefitPoint}">${ele.totalBenefitPoint||''}</td>
+                    <td class="" width="12%">${ele.crownBDRate&&ele.crownBDRate.initRateH}</td>
+                    <td class="" width="15%">${ele.crownBDRate&&ele.crownBDRate.initPoint}</td>
+                    <td class="" width="12%">${ele.crownBDRate&&ele.crownBDRate.initRateA}</td>
+                    <td class="trend ${ele.changeRateH&&(ele.changeRateH>0?'trend-up':'trend-down')}" width="12%">${ele.crownBDRate&&ele.crownBDRate.rateH}</td>
+                    <td class="trend ${ele.changePoint&&(ele.changePoint>0?'trend-up':'trend-down')}" width="15%">${ele.crownBDRate&&ele.crownBDRate.point}</td>
+                    <td class="trend ${ele.changeRateA&&(ele.changeRateA>0?'trend-up':'trend-down')}" width="12%">${ele.crownBDRate&&ele.crownBDRate.rateA}</td>
+                    <td><button class="small ${ele.crownBDRate&&ele.crownBDRate.alarmFlag?'danger':'success'}">趋势</button></td>
                   </tr>
                   <tr>
-                    <td class="hide"></td>
-                    <td class="bold">${ele.jzWPayAmount>0? ele.jzWPayAmount : ''}</td>
-                    <td class="bold">${ele.jzDPayAmount>0? ele.jzDPayAmount : ''}</td>
-                    <td class="bold">${ele.jzLPayAmount>0? ele.jzLPayAmount : ''}</td>
-                    <td class="bold">${ele.hgWPayAmount>0? ele.hgWPayAmount : ''}</td>
-                    <td class="bold">${ele.hgDPayAmount>0? ele.hgDPayAmount : ''}</td>
-                    <td class="bold">${ele.hgLPayAmount>0? ele.hgLPayAmount : ''}</td>
-                    <td class="bold">${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}</td>
+                    <td>${''}</td>
+                    <td>${''}</td>
+                    <td>${''}</td>
+                    <td>${''}</td>
+                    <td>${''}</td>
+                    <td>${''}</td>
+                    <td>${'2'}</td>
                   </tr>
                 </table>
               </div>
@@ -173,125 +152,14 @@
       };
     }
 
-    /* 方法：绑定投注事件 */
-    function bindBet(callback) {
-      const s_jzPayAmount = G.s_bet.querySelector('#s_jzPayAmount');
-      const s_jzRebatePoint = G.s_bet.querySelector('#s_jzRebatePoint');
-      const s_hgERebatePoint = G.s_bet.querySelector('#s_hgERebatePoint');
-      const s_hgARebatePoint = G.s_bet.querySelector('#s_hgARebatePoint');
-      const s_refreshFreq = G.s_bet.querySelector('#s_refreshFreq');
-      const s_hightBenefitPoint = G.s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = G.s_bet.querySelector('#s_middleBenefitPoint');
-      const s_bet_ensure = G.s_bet.querySelector('button');
-
-      s_bet_ensure.addEventListener('click', (e) => {
-        isFirstTimeInitBet = false;
-        const betObj = {
-          jzPayAmount: s_jzPayAmount.value.trim(),
-          jzRebatePoint: s_jzRebatePoint.value.trim(),
-          hgERebatePoint: s_hgERebatePoint.value.trim(),
-          hgARebatePoint: s_hgARebatePoint.value.trim(),
-        };
-        G.s_bet.querySelector('#s_hightBenefitPoint').nowValue = s_hightBenefitPoint.value.trim();
-        G.s_bet.querySelector('#s_middleBenefitPoint').nowValue = s_middleBenefitPoint.value.trim();
-        const refreshFreq = s_refreshFreq.value;
-        if (!getValidBet({ ...betObj, refreshFreq })) {
-          return;
-        }
-        if (Number(s_refreshFreq.value) >= 1) {
-          G.refreshFreqTime = Math.ceil(Number(s_refreshFreq.value));
-        }
-        callback(betObj);
-      })
-    }
-
-    /* 方法：投注处理---点击按钮触发 */
-    function betAction(bet_params) {
-      getFootballBD(bet_params);
-      refreshList_end();
-      refreshList_start(bet_params);
-    }
-
-    /* 方法：初始化 投注 */
-    function initBet(params) {
-      const s_jzPayAmount = G.s_bet.querySelector('#s_jzPayAmount');
-      const s_jzRebatePoint = G.s_bet.querySelector('#s_jzRebatePoint');
-      const s_hgERebatePoint = G.s_bet.querySelector('#s_hgERebatePoint');
-      const s_hgARebatePoint = G.s_bet.querySelector('#s_hgARebatePoint');
-      const s_refreshFreq = G.s_bet.querySelector('#s_refreshFreq');
-      s_jzPayAmount.value = params.jzPayAmount;
-      s_jzRebatePoint.value = params.jzRebatePoint;
-      s_hgERebatePoint.value = params.hgERebatePoint;
-      s_hgARebatePoint.value = params.hgARebatePoint;
-      s_refreshFreq.value = params.refreshFreq;
-    }
-
-    /* 方法：初始化 投注的定值 */
-    function initBetConst() {
-      const s_hightBenefitPoint = G.s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = G.s_bet.querySelector('#s_middleBenefitPoint');
-      s_middleBenefitPoint.value = G.middleBenefitPoint;
-      s_hightBenefitPoint.value = G.hightBenefitPoint;
-    }
-
-    /* 方法：bet 校验 */
-    function getValidBet(params) {
-      const hightBenefitPoint = G.s_bet.querySelector('#s_hightBenefitPoint').nowValue || G.hightBenefitPoint;
-      const middleBenefitPoint = G.s_bet.querySelector('#s_middleBenefitPoint').nowValue || G.middleBenefitPoint;
-      const validBetObj = {
-        jzPayAmount: Number(params.jzPayAmount),
-        jzRebatePoint: Number(params.jzRebatePoint),
-        hgERebatePoint: Number(params.hgERebatePoint),
-        hgARebatePoint: Number(params.hgARebatePoint),
-        hightBenefitPoint: Number(hightBenefitPoint),
-        middleBenefitPoint: Number(middleBenefitPoint),
-        refreshFreq: Number(params.refreshFreq),
-      };
-      if (validBetObj.jzPayAmount&&!validBetObj.jzPayAmount) {
-        alert('体彩投注格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.jzRebatePoint&&!validBetObj.jzRebatePoint) {
-        alert('体彩返点格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.hgERebatePoint&&!validBetObj.hgERebatePoint) {
-        alert('皇冠返点格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.hgARebatePoint&&!validBetObj.hgARebatePoint) {
-        alert('皇冠让球返点格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.hightBenefitPoint&&!validBetObj.hightBenefitPoint) {
-        alert('预警利润格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.middleBenefitPoint&&!validBetObj.middleBenefitPoint) {
-        alert('跟踪利润格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.refreshFreq&&!validBetObj.refreshFreq) {
-        alert('刷新频率格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.refreshFreq&&validBetObj.refreshFreq < 0) {
-        alert('刷新频率需 > 0，请重新输入。。');
-        return false;
-      }
-      return true;
-    }
-
     /* 方法：绑定筛选事件 */
     function bindFilter(callback) {
       const s_filter = s_content_box.querySelector('#s_filter');
       const s_type = s_filter.querySelector('#s_type')
-      const s_level = s_filter.querySelector('#s_level')
       const s_team = s_filter.querySelector('#s_team')
       G.filter_ensureNode.addEventListener('click', (e) => {
         callback({
           type: s_type.value.trim(),
-          level: s_level.value.trim(),
           team: s_team.value.trim(),
         });
       })
@@ -299,12 +167,11 @@
 
     /* 方法：筛选处理---点击按钮触发 */
     function filterAction(filter_params = {}) {
-      let { type, level, team } = filter_params;
+      let { type, team } = filter_params;
       const nodeStrList = generateListStr(G.listData_index, (ele) => {
-        const typeCondition = !(type && type.trim()) || (ele.competitionType.includes(type));
-        const levelCondition = !(level && level.trim()) || (ele.level.includes(level));
+        const typeCondition = !(type && type.trim()) || (ele.leagueName.includes(type));
         const teamCondition = !(team && team.trim()) || (ele.teamNameH.includes(team) || ele.teamNameA.includes(team));
-        const filterCondition = typeCondition && levelCondition && teamCondition;
+        const filterCondition = typeCondition && teamCondition;
 
         if (filterCondition) {
           return true;
@@ -316,9 +183,9 @@
     }
 
     /* 方法：refresh start */
-    function refreshList_start(params) {
+    function refreshList_start() {
       G.clock = setInterval(() => {
-        getFootballBD(params);
+        getFootballBD();
       }, G.refreshFreqTime * 1000);
     }
 
@@ -329,34 +196,24 @@
     }
 
     /* 方法：获取数据 */
-    function getFootballBD(bet_params) {
+    function getFootballBD() {
       changeBlockBetStatus({ // 修改比赛投注状态
         optType: 0,
         hiddenCalcIds: []
       }, () => {
         // api：get 列表数据--静态调用 _file，API 调用 _api
         if (!w.location.host) {
-          getFootballBD_file(bet_params);
+          getFootballBD_file();
         } else {
-          getFootballBD_api(bet_params);
+          getFootballBD_api();
         }
       });
     }
 
     /* 方法：api 获取数据 */
-    function getFootballBD_api(bet_params) {
+    function getFootballBD_api() {
       // api：get 列表数据
-      let data = bet_params && {
-        jzPayAmount: bet_params.jzPayAmount,
-        jzRebatePoint: bet_params.jzRebatePoint,
-        hgERebatePoint: bet_params.hgERebatePoint,
-        hgARebatePoint: bet_params.hgARebatePoint,
-        needFresh: bet_params.needFresh || false
-      } || {
-        jzPayAmount: '',
-        jzRebatePoint: '',
-        hgERebatePoint: '',
-        hgARebatePoint: '',
+      let data = {
         needFresh: false,
       };
 
@@ -373,17 +230,8 @@
         G.listData_index = res.data;
         G.filter_ensureNode.click();
         if (G.isFirstTimeInitBet) {
-          const bet_params = {
-            jzPayAmount: res.jzPayAmount,
-            jzRebatePoint: res.jzRebatePoint,
-            hgERebatePoint: res.hgERebatePoint,
-            hgARebatePoint: res.hgARebatePoint,
-            refreshFreq: res.refreshFreq,
-          };
-          G.refreshFreq = res.refreshFreq;
-          initBet(bet_params);
           refreshList_end();
-          refreshList_start(bet_params);
+          refreshList_start();
           // 每次请求重置
           G.isFirstTimeInitBet = false;
         }
@@ -399,41 +247,23 @@
     }
 
     /* 方法：本地 获取数据 */
-    function getFootballBD_file(bet_params) {
+    function getFootballBD_file() {
       // api：get 列表数据
-      let data = bet_params && {
-        jzPayAmount: bet_params.jzPayAmount,
-        jzRebatePoint: bet_params.jzRebatePoint,
-        hgERebatePoint: bet_params.hgERebatePoint,
-        hgARebatePoint: bet_params.hgARebatePoint,
-        needFresh: bet_params.needFresh || false
-      } || {
-        jzPayAmount: '',
-        jzRebatePoint: '',
-        hgERebatePoint: '',
-        hgARebatePoint: '',
+      let data = {
         needFresh: false,
       };
+
       // 请求之前先停止 audio
       audioClose();
       const api_url = w.API_URL && w.API_URL.footballBD;
 
       setTimeout(() => {
-        G.response = w.mock.res;
-        G.listData_index = w.mock.res.data;
+        G.response = w.mock.FootballBDData;
+        G.listData_index = w.mock.FootballBDData.data;
         G.filter_ensureNode.click();
         if (G.isFirstTimeInitBet) {
-          const bet_params = {
-            jzPayAmount: w.mock.res.jzPayAmount,
-            jzRebatePoint: w.mock.res.jzRebatePoint,
-            hgERebatePoint: w.mock.res.hgERebatePoint,
-            hgARebatePoint: w.mock.res.hgARebatePoint,
-            refreshFreq: w.mock.res.refreshFreq,
-          };
-          G.refreshFreqTime = w.mock.res.refreshFreq;
-          initBet(bet_params);
           refreshList_end();
-          refreshList_start(bet_params);
+          refreshList_start();
           // 每次请求重置
           G.isFirstTimeInitBet = false;
         }
@@ -834,7 +664,6 @@
                 <span></span>
               </div>
               <div class="level">
-                <span>${ele.level}</span>
                 <span>${ele.matchTime}</span>
               </div>
               <div class="teams">
