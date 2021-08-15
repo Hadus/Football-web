@@ -96,7 +96,7 @@
                   <button class="primary s-calculator-index" data-index=${index}>告警设置</button>
                 </div>
                 <div class="is-bet">
-                  已投注：
+                  不关注：
                   <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
@@ -653,88 +653,9 @@
       if(G.showTabName === 'index'){
         nodeStr += `
           <div>
-            <label>请输入投注金额：
-              <input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元
+            <label>本场比赛的目标赔率：
+              <input class="big" type="number" value="2.00">
             </label>
-          </div>
-          <div class="block">
-            <div class="top">
-              <div class="competitionType">
-                <p>${ele.competitionType}</p>
-                <span></span>
-              </div>
-              <div class="level">
-                <span>${ele.matchTime}</span>
-              </div>
-              <div class="teams">
-                <span class="team1">${ele.teamNameH}</span>
-                <span class="icon-vs"></span>
-                <span class="team2">${ele.teamNameA}</span>
-              </div>
-            </div>
-            <div class="bot">
-              <table>
-                <tr class="head">
-                  <th width="44%" colspan="4">
-                    <span>${ele.jzRateType}</span>
-                  </th>
-                  <th width="40%" colspan="3">
-                    <span>${ele.hgRateType}</span>
-                  </th>
-                  <th width="20%" colspan="1">利润</th>
-                </tr>
-                <tr>
-                  <td width="6%">
-                    <input type="text" disabled data-input-key="jzPValue" value=${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}>
-                  </td>
-                  <td width="10%">
-                    <input type="number" data-input-key="jzWRate" value=${ele.jzWRate||''}>
-                  </td>
-                  <td width="16%">
-                    <input type="number" data-input-key="jzDRate" value=${ele.jzDRate||''}>
-                  </td>
-                  <td width="11%">
-                    <input type="number" data-input-key="jzLRate" value=${ele.jzLRate||''}>
-                  </td>
-                  <td width="13%">
-                    <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
-                  </td>
-                  <td width="16%">
-                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
-                  </td>
-                  <td width="12%">
-                    <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="hide"></td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzWPayAmount" disabled value=${ele.jzWPayAmount>0? ele.jzWPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzDPayAmount" disabled value=${ele.jzDPayAmount>0? ele.jzDPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" disabled value=${ele.jzLPayAmount>0? ele.jzLPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgWPayAmount" disabled value=${ele.hgWPayAmount>0? ele.hgWPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgDPayAmount" disabled value=${ele.hgDPayAmount>0? ele.hgDPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgLPayAmount" disabled value=${ele.hgLPayAmount>0? ele.hgLPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="totalBenefitAmount" disabled value=${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}>
-                  </td>
-                </tr>
-              </table>
-            </div>
           </div>
         `;
       }
