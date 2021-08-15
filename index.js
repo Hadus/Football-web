@@ -32,9 +32,10 @@ function initJS() {
 /* 方法：初始化 JSON */
 function initJSON() {
   const dataFileList = [
-    "./lib/data/FootballData.js",
+    "./lib/data/FootballBDData.js",
     "./lib/data/CalculatorData.js",
-    "./lib/data/StatusData.js"
+    "./lib/data/StatusData.js",
+    "./lib/data/BDAddAlarmData.js",
   ]
   dataFileList.forEach((ele) => {
     const script = document.createElement('script');
@@ -46,6 +47,9 @@ function initJSON() {
 
 window.onload = function () {
   if (!window.location.host) {
+    Object.assign(window, {
+      mock: {}
+    });
     initJSON();
   }
   initJS();
