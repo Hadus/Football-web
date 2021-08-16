@@ -143,13 +143,13 @@
                     <th width="16%" colspan="1">利润</th>
                   </tr>
                   <tr>
-                    <td class="trend ${tdClass_jzPValue}" width="6%">${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}</td>
-                    <td class="trend ${ele.changeJzWRate&&(ele.changeJzWRate>0?'trend-up':'trend-down')} ${ele.jzWHighlight?'red':''}" width="16%">${ele.jzWRate}</td>
+                    <td class="trend ${tdClass_jzPValue}" width="5%">${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}</td>
+                    <td class="trend ${ele.changeJzWRate&&(ele.changeJzWRate>0?'trend-up':'trend-down')} ${ele.jzWHighlight?'red':''}" width="10%">${ele.jzWRate}</td>
                     <td class="trend ${ele.changeJzDRate&&(ele.changeJzDRate>0?'trend-up':'trend-down')} ${ele.jzDHighlight?'red':''}" width="10%">${ele.jzDRate}</td>
-                    <td class="trend ${ele.changeJzLRate&&(ele.changeJzLRate>0?'trend-down':'trend-up')} ${ele.jzLHighlight?'red':''}" width="11%">${ele.jzLRate}</td>
-                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}" width="13%">${ele.hgWRate}</td>
-                    <td class="trend ${ele.changeHgDRate&&(ele.changeHgDRate>0?'trend-up':'trend-down')} ${ele.hgDHighlight?'red':''}" width="16%">${ele.hgPDisplay == ''? ele.hgDRate : ele.hgPDisplay}</td>
-                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}" width="12%">${ele.hgLRate}</td>
+                    <td class="trend ${ele.changeJzLRate&&(ele.changeJzLRate>0?'trend-down':'trend-up')} ${ele.jzLHighlight?'red':''}" width="10%">${ele.jzLRate}</td>
+                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}" width="10%">${ele.hgWRate}</td>
+                    <td class="trend ${ele.changeHgDRate&&(ele.changeHgDRate>0?'trend-up':'trend-down')} ${ele.hgDHighlight?'red':''}" width="18%">${ele.hgPDisplay == ''? ele.hgDRate : ele.hgPDisplay}</td>
+                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}" width="18%">${ele.hgLRate}</td>
                     <td class="${tdClass_totalBenefitPoint}">${ele.totalBenefitPoint||''}</td>
                   </tr>
                   <tr>
@@ -1031,10 +1031,12 @@
       const ele = w.dialogData = Object.assign({}, obj);
       let nodeStr = '';
       if(showTableName === 'index'){
-        let hgLRateFormat = ele.hgLRate.trim();
-        if(hgLRateFormat.includes(' ')){
-          hgLRateFormat = hgLRateFormat.split(' ')[1];
+        let hgLRateFormat02 = ele.hgLRate.trim(),hgLRateFormat01 = '';
+        if(hgLRateFormat02.includes(' ')){
+          hgLRateFormat01 = hgLRateFormat02.split(' ')[0];
+          hgLRateFormat02 = hgLRateFormat02.split(' ')[1];
         }
+        debugger
         nodeStr += `
           <div>
             <label>请输入投注金额：
@@ -1069,27 +1071,28 @@
                   <th width="20%" colspan="1">利润</th>
                 </tr>
                 <tr>
-                  <td width="6%">
+                  <td width="5%">
                     <input type="text" disabled data-input-key="jzPValue" value=${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}>
                   </td>
                   <td width="10%">
                     <input type="number" data-input-key="jzWRate" value=${ele.jzWRate||''}>
                   </td>
-                  <td width="16%">
+                  <td width="10%">
                     <input type="number" data-input-key="jzDRate" value=${ele.jzDRate||''}>
                   </td>
-                  <td width="11%">
+                  <td width="10%">
                     <input type="number" data-input-key="jzLRate" value=${ele.jzLRate||''}>
                   </td>
-                  <td width="13%">
+                  <td width="10%">
                     <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
                   </td>
-                  <td width="16%">
-                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
+                  <td width="18%">
+                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value="${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}">
                     <input type="number" class="hide" disabled data-input-key="hgDRate" value=${ele.hgDRate}>
                   </td>
-                  <td width="12%">
-                    <input type="number" data-input-key="hgLRate" value=${hgLRateFormat||''}>
+                  <td width="18%">
+                    <output>${hgLRateFormat01}</output>
+                    <input type="number" class="${hgLRateFormat01&&'small'}" data-input-key="hgLRate" value=${hgLRateFormat02||''}>
                   </td>
                   <td>
                     <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
