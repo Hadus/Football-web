@@ -98,7 +98,7 @@
           let tdClass_totalBenefitPoint = '';
           // 需要判断 空 或者 0 吗
           if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red';
+            tdClass_totalBenefitPoint = 'tips red flash';
             ele.isBet === -1 && alert_times_index.danger++;
           } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
             tdClass_totalBenefitPoint = 'tips yellow';
@@ -181,7 +181,7 @@
           let tdClass_totalBenefitPoint = '';
           // 需要判断 空 或者 0 吗
           if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red';
+            tdClass_totalBenefitPoint = 'tips red flash';
             ele.isBet === -1 && alert_times_ttg.danger++;
           } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
             tdClass_totalBenefitPoint = 'tips yellow';

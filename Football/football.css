@@ -249,14 +249,17 @@ body>div {
 
 .tips.red::after {
   background: #ff0102;
-  animation: blockAlert 1.5s;
-  animation-iteration-count: infinite;
-  animation-direction: normal;
-  animation-play-state: running;
 }
 
 .tips.yellow::after {
   background: #ffaf01;
+}
+
+.tips.flash::after {
+  animation: blockAlert 1.5s;
+  animation-iteration-count: infinite;
+  animation-direction: normal;
+  animation-play-state: running;
 }
 
 @keyframes blockAlert {
