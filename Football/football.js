@@ -870,6 +870,7 @@
             crownARate: {
               point: inputValueList.hgPValue, // hgPValue
               rateA: inputValueList.hgLRate,
+              rateD: inputValueList.hgDRate,
               rateH: inputValueList.hgWRate
             }
           };
@@ -891,9 +892,9 @@
             hasJzDate: false,
             hasJzRDate: true,
             point: Number(inputValueList.jzPValue) + '', // 去掉 + 号
-            rateRD: inputValueList.jzDRate,
-            rateRL: inputValueList.jzLRate,
-            rateRW: inputValueList.jzWRate,
+            rateRD: inputValueList.jzRDRate,
+            rateRL: inputValueList.jzRLRate,
+            rateRW: inputValueList.jzRWRate,
           }
         }
       } else if(showTableName === 'ttg'){
@@ -1080,7 +1081,7 @@
                     <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
                   </td>
                   <td width="16%">
-                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
+                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
                   </td>
                   <td width="12%">
                     <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
