@@ -209,7 +209,7 @@ body>div {
   font-weight: bold;
 }
 
-.block table tr td.hide {
+.block table tr td.v-hide {
   visibility: hidden;
 }
 

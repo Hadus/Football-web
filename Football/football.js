@@ -1096,7 +1096,7 @@
                   </td>
                 </tr>
                 <tr>
-                  <td class="hide"></td>
+                  <td class="v-hide"></td>
                   <td class="bold">
                     <input type="number" data-output-key="jzWPayAmount" disabled value=${ele.jzWPayAmount>0? ele.jzWPayAmount : ''}>
                   </td>
