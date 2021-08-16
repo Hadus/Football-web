@@ -480,6 +480,10 @@ body>div {
   display: none;
 }
 
+.dialog-box-wrapper .hide {
+  display: none;
+}
+
 .dialog-box-wrapper.show {
   display: block;
   z-index: 999;

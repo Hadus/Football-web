@@ -1031,6 +1031,10 @@
       const ele = w.dialogData = Object.assign({}, obj);
       let nodeStr = '';
       if(showTableName === 'index'){
+        let hgLRateFormat = ele.hgLRate.trim();
+        if(hgLRateFormat.includes(' ')){
+          hgLRateFormat = hgLRateFormat.split(' ')[1];
+        }
         nodeStr += `
           <div>
             <label>请输入投注金额：
@@ -1082,10 +1086,10 @@
                   </td>
                   <td width="16%">
                     <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
-                    <input type="number" disabled data-input-key="hgDRate" value=${ele.hgDRate}>
+                    <input type="number" class="hide" disabled data-input-key="hgDRate" value=${ele.hgDRate}>
                   </td>
                   <td width="12%">
-                    <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
+                    <input type="number" data-input-key="hgLRate" value=${hgLRateFormat||''}>
                   </td>
                   <td>
                     <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
