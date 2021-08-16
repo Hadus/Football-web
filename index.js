@@ -46,6 +46,9 @@ function initJSON() {
 
 window.onload = function () {
   if (!window.location.host) {
+    Object.assign(window, {
+      mock: {}
+    });
     initJSON();
   }
   initJS();

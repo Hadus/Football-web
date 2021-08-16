@@ -553,19 +553,19 @@
       const url_getData = w.API_URL && w.API_URL.getData;
 
       setTimeout(() => {
-        w.response = res;
-        w.listData_index = res.data;
-        w.listData_ttg = res.ttgData;
+        w.response = w.mock.res;
+        w.listData_index = w.mock.res.data;
+        w.listData_ttg = w.mock.res.ttgData;
         w.filter_ensureNode.click();
         if (isFirstTimeInitBet) {
           const bet_params = {
-            jzPayAmount: res.jzPayAmount,
-            jzRebatePoint: res.jzRebatePoint,
-            hgERebatePoint: res.hgERebatePoint,
-            hgARebatePoint: res.hgARebatePoint,
-            refreshFreq: res.refreshFreq,
+            jzPayAmount: w.mock.res.jzPayAmount,
+            jzRebatePoint: w.mock.res.jzRebatePoint,
+            hgERebatePoint: w.mock.res.hgERebatePoint,
+            hgARebatePoint: w.mock.res.hgARebatePoint,
+            refreshFreq: w.mock.res.refreshFreq,
           };
-          w.refreshFreqTime = res.refreshFreq;
+          w.refreshFreqTime = w.mock.res.refreshFreq;
           initBet(bet_params);
           refreshList_end();
           refreshList_start(bet_params);
@@ -755,7 +755,7 @@
       const api_url = w.API_URL && w.API_URL.staticValues;
 
       setTimeout(() => {
-        w.hideBetList = StatusData.hiddenCalcIds;
+        w.hideBetList = w.mock.StatusData.hiddenCalcIds;
         callback();
       }, .5 * 1000);
     }
@@ -828,7 +828,7 @@
 
       setTimeout(() => {
         console.log("api 请求成功==>");
-        callback_calculator(w.calculatorData, outputNodeList);
+        callback_calculator(w.mock.CalculatorData, outputNodeList);
       }, .5 * 1000);
     }
 
