@@ -892,9 +892,9 @@
             hasJzDate: false,
             hasJzRDate: true,
             point: Number(inputValueList.jzPValue) + '', // 去掉 + 号
-            rateRD: inputValueList.jzRDRate,
-            rateRL: inputValueList.jzRLRate,
-            rateRW: inputValueList.jzRWRate,
+            rateRD: inputValueList.jzDRate,
+            rateRL: inputValueList.jzLRate,
+            rateRW: inputValueList.jzWRate,
           }
         }
       } else if(showTableName === 'ttg'){
@@ -1082,6 +1082,7 @@
                   </td>
                   <td width="16%">
                     <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
+                    <input type="number" disabled data-input-key="hgDRate" value=${ele.hgDRate}>
                   </td>
                   <td width="12%">
                     <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
