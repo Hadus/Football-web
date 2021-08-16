@@ -1036,7 +1036,7 @@
             <label>请输入投注金额：
               <input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元
             </label>
-          </div>
+          </div></br>
           <div class="block">
             <div class="top">
               <div class="competitionType">
@@ -1122,7 +1122,7 @@
         nodeStr += `
           <div>
             <label>请输入投注金额：<input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元</label>
-          </div>
+          </div></br>
           <div class="block">
             <div class="top">
               <div class="competitionType">
