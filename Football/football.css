@@ -268,11 +268,7 @@ body>div {
 
 @keyframes blockAlert {
   0% {
-    background-color: pink;
-  }
-
-  100% {
-    background-color: #ff0102;
+    background-color: rgb(220, 221, 200);
   }
 }
 
