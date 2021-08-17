@@ -1,6 +1,6 @@
 // api 地址
 window.API_URL = {
-  getData: 'footballBD',
+  footballBD: 'footballBD',
   BDAddAlarm: 'BDAddAlarm',
   staticValues:'staticValues',
   login: 'login'
