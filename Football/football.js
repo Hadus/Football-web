@@ -288,12 +288,10 @@
     function bindFilter(callback) {
       const s_filter = d.querySelector('#s_filter');
       const s_type = s_filter.querySelector('#s_type')
-      const s_level = s_filter.querySelector('#s_level')
       const s_team = s_filter.querySelector('#s_team')
       w.filter_ensureNode.addEventListener('click', (e) => {
         callback({
           type: s_type.value.trim(),
-          level: s_level.value.trim(),
           team: s_team.value.trim(),
         });
       })
@@ -301,12 +299,11 @@
 
     /* 方法：筛选处理---点击按钮触发 */
     function filterAction(filter_params = {}) {
-      let { type, level, team } = filter_params;
+      let { type, team } = filter_params;
       const nodeStrList = generateListStr(listData_index, listData_ttg, (ele) => {
         const typeCondition = !(type && type.trim()) || (ele.competitionType.includes(type));
-        const levelCondition = !(level && level.trim()) || (ele.level.includes(level));
         const teamCondition = !(team && team.trim()) || (ele.teamNameH.includes(team) || ele.teamNameA.includes(team));
-        const filterCondition = typeCondition && levelCondition && teamCondition;
+        const filterCondition = typeCondition && teamCondition;
 
         if (filterCondition) {
           return true;
