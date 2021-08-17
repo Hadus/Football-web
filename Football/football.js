@@ -621,24 +621,21 @@
 
     /* 方法：绑定 tabs */
     function bindTabs() {
-      const s_tabs = d.querySelector('#s_tabsBox');
-      const s_lis = s_tabs.querySelectorAll('li');
-      const s_table_index = d.querySelector('#s_table_index');
-      const s_table_ttg = d.querySelector('#s_table_ttg');
-      s_lis.forEach((ele) => {
+      const s_tab_List = d.querySelectorAll('#s_tabsBox>li');
+      const s_tabContent_list = d.querySelectorAll('div>.table');
+      s_tab_List.forEach((ele, index) => {
         ele.addEventListener('click', function (e) {
-          if(this.dataset['index'] === w.showTableName){
+          const tabName = ele.dataset['tab'];
+          if(tabName === w.showTabName){
             return false;
           }
-          s_lis.forEach((ele_inner) => {
-            ele_inner.classList.remove('active');
-            w.showTableName = this.dataset['index'];
+          s_tabContent_list.forEach((ele_inner, index_inner) => {
+            ele_inner.classList.remove('show');
+            s_tab_List[index_inner].classList.remove('active');
           })
-
-          this.classList.add('active');
-          
-          s_table_index.classList.toggle('hide');
-          s_table_ttg.classList.toggle('hide');
+          s_tabContent_list[index].classList.add('show');
+          ele.classList.add('active');
+          w.showTabName = tabName;
         })
       })
     }
