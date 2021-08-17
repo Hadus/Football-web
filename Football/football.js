@@ -643,7 +643,7 @@
 
     /* 方法：api 计算 */
     function getCalculator_api(params) {
-      let data = params || {
+      let data = params && {
         matchId : params.matchId,
         matchType : params.matchId, 
         alarmH : params.matchId.alarmH,
@@ -672,7 +672,7 @@
 
     /* 方法：本地 计算 */
     function getCalculator_file(params) {
-      let data = params || {
+      let data = params && {
         matchId : params.matchId,
         matchType : params.matchId, 
         alarmH : params.matchId.alarmH,
@@ -683,9 +683,7 @@
         alarmH : '',
         alarmA : ''
       };
-
       const api_url = w.API_URL && w.API_URL.BDAddAlarm;
-      debugger
 
       setTimeout(() => {
         console.log("api 请求成功==>");
@@ -818,13 +816,13 @@
             <p>当前赔率：</p>
             <p class="label-box">
               <label>主队（<b><i>${ele.teamNameH}</i></b>）：
-                <input data-input-key="test1" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
+                <input data-input-key="alarmH" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
               </label>
               <label>point：
                 <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
               </label>
               <label>客队（<b><i>${ele.teamNameA}</i></b>）：
-                <input data-input-key="test2" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
+                <input data-input-key="alarmA" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
               </label>
             <p>
           </div>
@@ -849,13 +847,13 @@
             <p>当前赔率：</p>
             <p class="label-box">
               <label>主队（<b><i>${ele.teamNameH}</i></b>）：
-                <input data-input-key="test1" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
+                <input data-input-key="alarmH" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
               </label>
               <label>point：
                 <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
               </label>
               <label>客队（<b><i>${ele.teamNameA}</i></b>）：
-                <input data-input-key="test2" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
+                <input data-input-key="alarmA" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
               </label>
             <p>
           </div>
