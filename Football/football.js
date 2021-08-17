@@ -94,26 +94,32 @@
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
         // 过滤
         if(filterCondition){
-          const tdClass_jzPValue = ele.jzPValue == 0 ? '' : (ele.jzPValue < 0 ? 'green' : 'red');
-          let tdClass_totalBenefitPoint = '';
-          // 需要判断 空 或者 0 吗
-          if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red flash';
-            ele.isBet === -1 && alert_times_index.danger++;
-          } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
-            tdClass_totalBenefitPoint = 'tips yellow';
-            ele.isBet === -1 && alert_times_index.warning++;
+          if(!ele.crownBDRate){
+            return;
           }
-    
+          let tdCLass_alert_level01 = tdCLass_alert_level02 = '';
+          switch(ele.crownBDRate.alarmFlag){
+            case 0:
+              tdCLass_alert_level01 = '';
+              tdCLass_alert_level02 = '';
+              break;
+            case 1:
+              tdCLass_alert_level01 = 'tips yellow flash';
+              tdCLass_alert_level02 = '';
+              break;
+            case 2:
+              tdCLass_alert_level01 = '';
+              tdCLass_alert_level02 = 'tips yellow';
+              break;
+          }
           nodeStr_index += `
             <div class="block">
               <div class="top">
                 <div class="competitionType">
-                  <p>${ele.competitionType}</p>
+                  <p>${ele.leagueName}</p>
                   <span></span>
                 </div>
                 <div class="level">
-                  <span>${ele.level}</span>
                   <span>${ele.matchTime}</span>
                 </div>
                 <div class="teams">
@@ -122,11 +128,11 @@
                   <span class="team2">${ele.teamNameA}</span>
                 </div>
                 <div class="calculator">
-                  <button class="primary small s-calculator-index" data-index=${index}>计算</button>
+                  <button class="primary s-calculator-index" data-index=${index}>告警设置</button>
                 </div>
                 <div class="is-bet">
-                  已投注：
-                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.calcId}>
+                  不关注：
+                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
                 </div>
@@ -134,33 +140,31 @@
               <div class="bot">
                 <table>
                   <tr class="head">
-                    <th width="44%" colspan="4">
-                      <span>${ele.jzRateType}</span>
+                    <th width="44%" colspan="3">
+                      <span>初盘</span>
                     </th>
                     <th width="40%" colspan="3">
-                      <span>${ele.hgRateType}</span>
+                      <span>既盘</span>
                     </th>
-                    <th width="16%" colspan="1">利润</th>
+                    <th width="16%" colspan="1">报警</th>
                   </tr>
                   <tr>
-                    <td class="trend ${tdClass_jzPValue}" width="5%">${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}</td>
-                    <td class="trend ${ele.changeJzWRate&&(ele.changeJzWRate>0?'trend-up':'trend-down')} ${ele.jzWHighlight?'red':''}" width="10%">${ele.jzWRate}</td>
-                    <td class="trend ${ele.changeJzDRate&&(ele.changeJzDRate>0?'trend-up':'trend-down')} ${ele.jzDHighlight?'red':''}" width="10%">${ele.jzDRate}</td>
-                    <td class="trend ${ele.changeJzLRate&&(ele.changeJzLRate>0?'trend-down':'trend-up')} ${ele.jzLHighlight?'red':''}" width="10%">${ele.jzLRate}</td>
-                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}" width="10%">${ele.hgWRate}</td>
-                    <td class="trend ${ele.changeHgDRate&&(ele.changeHgDRate>0?'trend-up':'trend-down')} ${ele.hgDHighlight?'red':''}" width="18%">${ele.hgPDisplay == ''? ele.hgDRate : ele.hgPDisplay}</td>
-                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}" width="18%">${ele.hgLRate}</td>
-                    <td class="${tdClass_totalBenefitPoint}">${ele.totalBenefitPoint||''}</td>
+                    <td class="" width="12%">${ele.crownBDRate.initRateH}</td>
+                    <td class="" width="15%">${ele.crownBDRate.initPoint}</td>
+                    <td class="" width="12%">${ele.crownBDRate.initRateA}</td>
+                    <td class="trend ${ele.crownBDRate.changeRateH&&(ele.crownBDRate.changeRateH>0?'trend-up':'trend-down')}" width="12%">${ele.crownBDRate.rateH}</td>
+                    <td class="trend ${ele.crownBDRate.changePoint&&(ele.crownBDRate.changePoint>0?'trend-up':'trend-down')}" width="15%">${ele.crownBDRate.point}</td>
+                    <td class="trend ${ele.crownBDRate.changeRateA&&(ele.crownBDRate.changeRateA>0?'trend-up':'trend-down')}" width="12%">${ele.crownBDRate.rateA}</td>
+                    <td class="${tdCLass_alert_level01}"> </td>
                   </tr>
                   <tr>
-                    <td class="hide"></td>
-                    <td class="bold">${ele.jzWPayAmount>0? ele.jzWPayAmount : ''}</td>
-                    <td class="bold">${ele.jzDPayAmount>0? ele.jzDPayAmount : ''}</td>
-                    <td class="bold">${ele.jzLPayAmount>0? ele.jzLPayAmount : ''}</td>
-                    <td class="bold">${ele.hgWPayAmount>0? ele.hgWPayAmount : ''}</td>
-                    <td class="bold">${ele.hgDPayAmount>0? ele.hgDPayAmount : ''}</td>
-                    <td class="bold">${ele.hgLPayAmount>0? ele.hgLPayAmount : ''}</td>
-                    <td class="bold">${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td class="tips ${ele.crownBDRate.alarmH?'red flash':''}">${ele.crownBDRate.hasUserSettingH?ele.crownBDRate.userRateH:''}</td>
+                    <td class="tips ${ele.crownBDRate.alarmPoint?'red flash':''}">${ele.crownBDRate.hasUserSettingPoint?ele.crownBDRate.userPoint:''}</td>
+                    <td class="tips ${ele.crownBDRate.alarmA?'red flash':''}">${ele.crownBDRate.hasUserSettingA?ele.crownBDRate.userRateA:''}</td>
+                    <td class="${tdCLass_alert_level02}"> </td>
                   </tr>
                 </table>
               </div>
@@ -178,25 +182,32 @@
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
         // 过滤
         if(filterCondition){
-          let tdClass_totalBenefitPoint = '';
-          // 需要判断 空 或者 0 吗
-          if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red flash';
-            ele.isBet === -1 && alert_times_ttg.danger++;
-          } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
-            tdClass_totalBenefitPoint = 'tips yellow';
-            ele.isBet === -1 && alert_times_ttg.warning++;
+          if(!ele.crownBDRate){
+            return;
           }
-          
-          nodeStr_ttg += `
+          let tdCLass_alert_level01 = tdCLass_alert_level02 = '';
+          switch(ele.crownBDRate.alarmFlag){
+            case 0:
+              tdCLass_alert_level01 = '';
+              tdCLass_alert_level02 = '';
+              break;
+            case 1:
+              tdCLass_alert_level01 = 'tips yellow flash';
+              tdCLass_alert_level02 = '';
+              break;
+            case 2:
+              tdCLass_alert_level01 = '';
+              tdCLass_alert_level02 = 'tips yellow';
+              break;
+          }
+          nodeStr_index += `
             <div class="block">
               <div class="top">
                 <div class="competitionType">
-                  <p>${ele.competitionType}</p>
+                  <p>${ele.leagueName}</p>
                   <span></span>
                 </div>
                 <div class="level">
-                  <span>${ele.level}</span>
                   <span>${ele.matchTime}</span>
                 </div>
                 <div class="teams">
@@ -205,11 +216,11 @@
                   <span class="team2">${ele.teamNameA}</span>
                 </div>
                 <div class="calculator">
-                  <button class="primary small s-calculator-ttg" data-index=${index}>计算</button>
+                  <button class="primary s-calculator-index" data-index=${index}>告警设置</button>
                 </div>
                 <div class="is-bet">
-                  已投注：
-                  <div class="s-is-bet-ttg switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.calcId}>
+                  不关注：
+                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
                 </div>
@@ -217,57 +228,31 @@
               <div class="bot">
                 <table>
                   <tr class="head">
-                    <th width="44%" colspan="5">
-                      <span>${ele.jzRateType}</span>
+                    <th width="44%" colspan="3">
+                      <span>初盘</span>
                     </th>
                     <th width="40%" colspan="3">
-                      <span>${ele.hgRateType}</span>
+                      <span>既盘</span>
                     </th>
-                    <th width="16%" colspan="1">利润</th>
+                    <th width="16%" colspan="1">报警</th>
                   </tr>
                   <tr>
-                    <td class="bold" width="8%">进球数</td>
-                    <td width="10%">0球</td>
-                    <td width="10%">1球</td>
-                    <td width="10%">2球</td>
-                    <td width="10%">3球</td>
-                    <td width="12%">大球</td>
-                    <td width="12%">盘口</td>
-                    <td width="12%">小球</td>
+                    <td class="" width="12%">${ele.crownBDRate.initRateH}</td>
+                    <td class="" width="15%">${ele.crownBDRate.initPoint}</td>
+                    <td class="" width="12%">${ele.crownBDRate.initRateA}</td>
+                    <td class="trend ${ele.crownBDRate.changeRateH&&(ele.crownBDRate.changeRateH>0?'trend-up':'trend-down')}" width="12%">${ele.crownBDRate.rateH}</td>
+                    <td class="trend ${ele.crownBDRate.changePoint&&(ele.crownBDRate.changePoint>0?'trend-up':'trend-down')}" width="15%">${ele.crownBDRate.point}</td>
+                    <td class="trend ${ele.crownBDRate.changeRateA&&(ele.crownBDRate.changeRateA>0?'trend-up':'trend-down')}" width="12%">${ele.crownBDRate.rateA}</td>
+                    <td class="${tdCLass_alert_level01}"> </td>
+                  </tr>
+                  <tr>
                     <td></td>
-                  </tr>
-                  <tr>
-                    <td class="bold">赔  率</td>
-                    <td class="${ele.jzS0Highlight?'red':''}">${ele.jzS0Rate}</td>
-                    <td class="${ele.jzS1Highlight?'red':''}">${ele.jzS1Rate}</td>
-                    <td class="${ele.jzS2Highlight?'red':''}">${ele.jzS2Rate}</td>
-                    <td class="${ele.jzS3Highlight?'red':''}">${ele.jzS3Rate}</td>
-                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}">${ele.hgWRate}</td>
-                    <td class="${''}">${ele.hgPDisplay == ''? ele.hgPValue : ele.hgPDisplay}</td>
-                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}">${ele.hgLRate}</td>
-                    <td class="${tdClass_totalBenefitPoint}">${ele.totalBenefitPoint||''}</td>
-                  </tr>
-                  <tr>
-                    <td class="bold">投  注</td>
-                    <td class="bold">${ele.jzS0PayAmount>0? ele.jzS0PayAmount:''}</td>
-                    <td class="bold">${ele.jzS1PayAmount>0? ele.jzS1PayAmount:''}</td>
-                    <td class="bold">${ele.jzS2PayAmount>0? ele.jzS2PayAmount:''}</td>
-                    <td class="bold">${ele.jzS3PayAmount>0? ele.jzS3PayAmount:''}</td>
-                    <td class="bold">${ele.hgWPayAmount>0? ele.hgWPayAmount:''}</td>
-                    <td class="bold"></td>
-                    <td class="bold"></td>
-                    <td class="bold">${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}</td>
-                  </tr>
-                  <tr>
-                  <td class="bold">中  奖</td>
-                    <td class="gray trend ${ele.changeJzS0Rate&&(ele.changeJzS0Rate>0?'trend-up':'trend-down')}">${ele.jzS0BenefitAmount > 0 ? ele.jzS0BenefitAmount : ''}</td>
-                    <td class="gray trend ${ele.changeJzS1Rate&&(ele.changeJzS1Rate>0?'trend-up':'trend-down')}">${ele.jzS1BenefitAmount > 0 ? ele.jzS1BenefitAmount : ''}</td>
-                    <td class="gray trend ${ele.changeJzS2Rate&&(ele.changeJzS2Rate>0?'trend-up':'trend-down')}">${ele.jzS2BenefitAmount > 0 ? ele.jzS2BenefitAmount : ''}</td>
-                    <td class="gray trend ${ele.changeJzS3Rate&&(ele.changeJzS3Rate>0?'trend-up':'trend-down')}">${ele.jzS3BenefitAmount > 0 ? ele.jzS3BenefitAmount : ''}</td>
-                    <td class="gray">${ele.hgWBenefitAmount > 0 ? ele.hgWBenefitAmount : ''}</td>
-                    <td class="gray"></td>
-                    <td class="gray"></td>
-                    <td class="gray"></td>
+                    <td></td>
+                    <td></td>
+                    <td class="tips ${ele.crownBDRate.alarmH?'red flash':''}">${ele.crownBDRate.hasUserSettingH?ele.crownBDRate.userRateH:''}</td>
+                    <td class="tips ${ele.crownBDRate.alarmPoint?'red flash':''}">${ele.crownBDRate.hasUserSettingPoint?ele.crownBDRate.userPoint:''}</td>
+                    <td class="tips ${ele.crownBDRate.alarmA?'red flash':''}">${ele.crownBDRate.hasUserSettingA?ele.crownBDRate.userRateA:''}</td>
+                    <td class="${tdCLass_alert_level02}"> </td>
                   </tr>
                 </table>
               </div>
@@ -477,25 +462,15 @@
     }
 
     /* 方法：api 获取数据 */
-    function getData_api(bet_params) {
+    function getData_api() {
       // api：get 列表数据
-      let data = bet_params && {
-        jzPayAmount: bet_params.jzPayAmount,
-        jzRebatePoint: bet_params.jzRebatePoint,
-        hgERebatePoint: bet_params.hgERebatePoint,
-        hgARebatePoint: bet_params.hgARebatePoint,
-        needFresh: bet_params.needFresh || false
-      } || {
-        jzPayAmount: '',
-        jzRebatePoint: '',
-        hgERebatePoint: '',
-        hgARebatePoint: '',
+      let data = {
         needFresh: false,
       };
 
       // 请求之前先停止 audio
       audioClose();
-      const api_url = w.API_URL && w.API_URL.getData;
+      const api_url = w.API_URL && w.API_URL.footballBD;
 
       ajaxPromise({
         type: 'post',
@@ -504,20 +479,10 @@
       }).then(res => {
         w.response = res;
         w.listData_index = res.data;
-        w.listData_ttg = res.ttgData;
         w.filter_ensureNode.click();
-        if (isFirstTimeInitBet) {
-          const bet_params = {
-            jzPayAmount: res.jzPayAmount,
-            jzRebatePoint: res.jzRebatePoint,
-            hgERebatePoint: res.hgERebatePoint,
-            hgARebatePoint: res.hgARebatePoint,
-            refreshFreq: res.refreshFreq,
-          };
-          w.refreshFreq = res.refreshFreq;
-          initBet(bet_params);
+        if (w.isFirstTimeInitBet) {
           refreshList_end();
-          refreshList_start(bet_params);
+          refreshList_start();
           // 每次请求重置
           w.isFirstTimeInitBet = false;
         }
@@ -533,42 +498,23 @@
     }
 
     /* 方法：本地 获取数据 */
-    function getData_file(bet_params) {
+    function getData_file() {
       // api：get 列表数据
-      let data = bet_params && {
-        jzPayAmount: bet_params.jzPayAmount,
-        jzRebatePoint: bet_params.jzRebatePoint,
-        hgERebatePoint: bet_params.hgERebatePoint,
-        hgARebatePoint: bet_params.hgARebatePoint,
-        needFresh: bet_params.needFresh || false
-      } || {
-        jzPayAmount: '',
-        jzRebatePoint: '',
-        hgERebatePoint: '',
-        hgARebatePoint: '',
+      let data = {
         needFresh: false,
       };
+
       // 请求之前先停止 audio
       audioClose();
-      const url_getData = w.API_URL && w.API_URL.getData;
+      const api_url = w.API_URL && w.API_URL.footballBD;
 
       setTimeout(() => {
-        w.response = w.mock.res;
-        w.listData_index = w.mock.res.data;
-        w.listData_ttg = w.mock.res.ttgData;
+        w.response = w.mock.FootballBDData;
+        w.listData_index = w.mock.FootballBDData.data;
         w.filter_ensureNode.click();
-        if (isFirstTimeInitBet) {
-          const bet_params = {
-            jzPayAmount: w.mock.res.jzPayAmount,
-            jzRebatePoint: w.mock.res.jzRebatePoint,
-            hgERebatePoint: w.mock.res.hgERebatePoint,
-            hgARebatePoint: w.mock.res.hgARebatePoint,
-            refreshFreq: w.mock.res.refreshFreq,
-          };
-          w.refreshFreqTime = w.mock.res.refreshFreq;
-          initBet(bet_params);
+        if (w.isFirstTimeInitBet) {
           refreshList_end();
-          refreshList_start(bet_params);
+          refreshList_start();
           // 每次请求重置
           w.isFirstTimeInitBet = false;
         }
@@ -798,10 +744,10 @@
     }
 
     /* 方法：api 计算 */
-    function getCalculator_api(params, outputNodeList) {
+    function getCalculator_api(params) {
       let data = params || {};
 
-      const api_url = w.API_URL && w.API_URL.calculator;
+      const api_url = w.API_URL && w.API_URL.BDAddAlarm;
 
       ajaxPromise({
         type: 'post',
@@ -810,7 +756,7 @@
       }).then(res => {
         console.log("api 请求成功==>");
         console.log(res);
-        callback_calculator(res, outputNodeList);
+        callback_calculator(res);
       }).catch(err => {
         console.log("请求失败==>" + err);
         alert('请求失败，请联系管理员。');
@@ -818,14 +764,14 @@
     }
 
     /* 方法：本地 计算 */
-    function getCalculator_file(params, outputNodeList) {
+    function getCalculator_file(params) {
       let data = params || {};
 
-      const api_url = w.API_URL && w.API_URL.calculator;
+      const api_url = w.API_URL && w.API_URL.BDAddAlarm;
 
       setTimeout(() => {
         console.log("api 请求成功==>");
-        callback_calculator(w.mock.CalculatorData, outputNodeList);
+        callback_calculator(w.mock.BDAddAlarmData);
       }, .5 * 1000);
     }
 
@@ -1027,217 +973,69 @@
       dialogContentNode.innerHTML = '';
       const ele = w.dialogData = Object.assign({}, obj);
       let nodeStr = '';
+      const userRateH = ele.crownBDRate.hasUserSettingH ? ele.crownBDRate.userRateH : '';
+      const userPoint = ele.crownBDRate.hasUserSettingPoint ? ele.crownBDRate.userPoint : '';
+      const userRateA = ele.crownBDRate.hasUserSettingA ? ele.crownBDRate.userRateA : '';
       if(showTableName === 'index'){
-        let hgLRateFormat02 = ele.hgLRate.trim(),hgLRateFormat01 = '';
-        if(hgLRateFormat02.includes(' ')){
-          hgLRateFormat01 = hgLRateFormat02.split(' ')[0];
-          hgLRateFormat02 = hgLRateFormat02.split(' ')[1];
-        }
         nodeStr += `
           <div>
-            <label>请输入投注金额：
-              <input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元
-            </label>
-          </div></br>
-          <div class="block">
-            <div class="top">
-              <div class="competitionType">
-                <p>${ele.competitionType}</p>
-                <span></span>
-              </div>
-              <div class="level">
-                <span>${ele.level}</span>
-                <span>${ele.matchTime}</span>
-              </div>
-              <div class="teams">
-                <span class="team1">${ele.teamNameH}</span>
-                <span class="icon-vs"></span>
-                <span class="team2">${ele.teamNameA}</span>
-              </div>
-            </div>
-            <div class="bot">
-              <table>
-                <tr class="head">
-                  <th width="44%" colspan="4">
-                    <span>${ele.jzRateType}</span>
-                  </th>
-                  <th width="40%" colspan="3">
-                    <span>${ele.hgRateType}</span>
-                  </th>
-                  <th width="20%" colspan="1">利润</th>
-                </tr>
-                <tr>
-                  <td width="5%">
-                    <input type="text" disabled data-input-key="jzPValue" value=${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}>
-                  </td>
-                  <td width="10%">
-                    <input type="number" data-input-key="jzWRate" value=${ele.jzWRate||''}>
-                  </td>
-                  <td width="10%">
-                    <input type="number" data-input-key="jzDRate" value=${ele.jzDRate||''}>
-                  </td>
-                  <td width="10%">
-                    <input type="number" data-input-key="jzLRate" value=${ele.jzLRate||''}>
-                  </td>
-                  <td width="10%">
-                    <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
-                  </td>
-                  <td width="18%">
-                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value="${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}">
-                    <input type="number" class="hide" disabled data-input-key="hgDRate" value=${ele.hgDRate}>
-                  </td>
-                  <td width="18%">
-                    <output>${hgLRateFormat01}</output>
-                    <input type="number" class="${hgLRateFormat01&&'small'}" data-input-key="hgLRate" value=${hgLRateFormat02||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="v-hide"></td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzWPayAmount" disabled value=${ele.jzWPayAmount>0? ele.jzWPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzDPayAmount" disabled value=${ele.jzDPayAmount>0? ele.jzDPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" disabled value=${ele.jzLPayAmount>0? ele.jzLPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgWPayAmount" disabled value=${ele.hgWPayAmount>0? ele.hgWPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgDPayAmount" disabled value=${ele.hgDPayAmount>0? ele.hgDPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgLPayAmount" disabled value=${ele.hgLPayAmount>0? ele.hgLPayAmount : ''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="totalBenefitAmount" disabled value=${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}>
-                  </td>
-                </tr>
-              </table>
-            </div>
+            <p>当前赔率：</p>
+            <p class="label-box">
+              <label>主队（<b><i>${ele.teamNameH}</i></b>）：
+                <input class="big" disabled type="number" value="${ele.crownBDRate.rateH}">
+              </label>
+              <label>point：
+                <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
+              </label>
+              <label>客队（<b><i>${ele.teamNameA}</i></b>）：
+                <input class="big" disabled type="number" value="${ele.crownBDRate.rateA}">
+              </label>
+            <p>
+          </div>
+          <div>
+            <p>当前赔率：</p>
+            <p class="label-box">
+              <label>主队（<b><i>${ele.teamNameH}</i></b>）：
+                <input data-input-key="test1" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
+              </label>
+              <label>point：
+                <input class="big" type="number" value="${userPoint}">
+              </label>
+              <label>客队（<b><i>${ele.teamNameA}</i></b>）：
+                <input data-input-key="test2" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
+              </label>
+            <p>
           </div>
         `;
       } else if(showTableName === 'ttg'){
         nodeStr += `
           <div>
-            <label>请输入投注金额：<input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元</label>
-          </div></br>
-          <div class="block">
-            <div class="top">
-              <div class="competitionType">
-                <p>${ele.competitionType}</p>
-                <span></span>
-              </div>
-              <div class="level">
-                <span>${ele.level}</span>
-                <span>${ele.matchTime}</span>
-              </div>
-              <div class="teams">
-                <span class="team1">${ele.teamNameH}</span>
-                <span class="icon-vs"></span>
-                <span class="team2">${ele.teamNameA}</span>
-              </div>
-            </div>
-            <div class="bot">
-              <table>
-                <tr class="head">
-                  <th width="44%" colspan="5">
-                    <span>${ele.jzRateType}</span>
-                  </th>
-                  <th width="40%" colspan="3">
-                    <span>${ele.hgRateType}</span>
-                  </th>
-                  <th width="16%" colspan="1">利润</th>
-                </tr>
-                <tr>
-                  <td class="bold" width="8%">进球数</td>
-                  <td width="10%">0球</td>
-                  <td width="10%">1球</td>
-                  <td width="10%">2球</td>
-                  <td width="10%">3球</td>
-                  <td width="12%">大球</td>
-                  <td width="12%">盘口</td>
-                  <td width="12%">小球</td>
-                  <td></td>
-                </tr>
-                <tr>
-                  <td class="bold">赔  率</td>
-                  <td>
-                    <input type="number" data-input-key="jzS0Rate" value=${ele.jzS0Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="jzS1Rate" value=${ele.jzS1Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="jzS2Rate" value=${ele.jzS2Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="jzS3Rate" value=${ele.jzS3Rate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="hgPValue" data-input-res=${ele.hgPValue} disabled value=${ele.hgPDisplay == ''? ele.hgPValue : ele.hgPDisplay}>
-                  </td>
-                  <td>
-                    <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
-                  </td>
-                  <td>
-                    <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="bold">投  注</td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS0PayAmount" disabled value=${ele.jzS0PayAmount>0? ele.jzS0PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS1PayAmount" disabled value=${ele.jzS1PayAmount>0? ele.jzS1PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS2PayAmount" disabled value=${ele.jzS2PayAmount>0? ele.jzS2PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="jzS3PayAmount" disabled value=${ele.jzS3PayAmount>0? ele.jzS3PayAmount:''}>
-                  </td>
-                  <td class="bold">
-                    <input type="number" data-output-key="hgWPayAmount" disabled value=${ele.hgWPayAmount>0? ele.hgWPayAmount:''}>
-                  </td>
-                  <td class="bold"></td>
-                  <td class="bold"></td>
-                  <td class="bold">
-                    <input type="number" data-output-key="totalBenefitAmount" disabled value=${ele.totalBenefitAmount!=0? ele.totalBenefitAmount : ''}>
-                  </td>
-                </tr>
-                <tr>
-                  <td class="bold">中  奖</td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS0BenefitAmount" disabled value=${ele.jzS0BenefitAmount > 0 ? ele.jzS0BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS1BenefitAmount" disabled value=${ele.jzS1BenefitAmount > 0 ? ele.jzS1BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS2BenefitAmount" disabled value=${ele.jzS2BenefitAmount > 0 ? ele.jzS2BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="number" data-output-key="jzS3BenefitAmount" disabled value=${ele.jzS3BenefitAmount > 0 ? ele.jzS3BenefitAmount : ''}>
-                  </td>
-                  <td class="gray">
-                    <input type="text" data-output-key="hgWBenefitAmount" disabled value=${ele.hgWBenefitAmount > 0 ? ele.hgWBenefitAmount : ''}>
-                  </td>
-                  <td class="gray"></td>
-                  <td class="gray"></td>
-                  <td class="gray"></td>
-                </tr>
-              </table>
-            </div>
+            <p>当前赔率：</p>
+            <p class="label-box">
+              <label>主队（<b><i>${ele.teamNameH}</i></b>）：
+                <input class="big" disabled type="number" value="${ele.crownBDRate.rateH}">
+              </label>
+              <label>point：
+                <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
+              </label>
+              <label>客队（<b><i>${ele.teamNameA}</i></b>）：
+                <input class="big" disabled type="number" value="${ele.crownBDRate.rateA}">
+              </label>
+            <p>
+          </div>
+          <div>
+            <p>当前赔率：</p>
+            <p class="label-box">
+              <label>主队（<b><i>${ele.teamNameH}</i></b>）：
+                <input data-input-key="test1" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
+              </label>
+              <label>point：
+                <input class="big" type="number" value="${userPoint}">
+              </label>
+              <label>客队（<b><i>${ele.teamNameA}</i></b>）：
+                <input data-input-key="test2" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
+              </label>
+            <p>
           </div>
         `;
       }

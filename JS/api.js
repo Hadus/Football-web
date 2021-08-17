@@ -1,7 +1,7 @@
 // api 地址
 window.API_URL = {
-  getData: 'football',
-  calculator: 'calculator',
+  getData: 'footballBD',
+  BDAddAlarmData: 'BDAddAlarmData',
   staticValues:'staticValues',
   login: 'login'
 };

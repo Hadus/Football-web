@@ -530,6 +530,15 @@ body>div {
   text-align: left;
 }
 
+.dialog-box .content>div {
+  margin-top: 20px;
+  padding-left: 200px;
+}
+
+.dialog-box .content label {
+  margin-left: 50px;
+}
+
 .dialog-box .btn-box {
   width: 100%;
   text-align: center;
