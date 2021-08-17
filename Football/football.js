@@ -356,7 +356,7 @@
       const api_url = w.API_URL && w.API_URL.footballBD;
 
       ajaxPromise({
-        type: 'post',
+        type: 'get',
         url: getCurrentUrl() + api_url,
         data
       }).then(res => {
@@ -656,7 +656,6 @@
       };
 
       const api_url = w.API_URL && w.API_URL.BDAddAlarm;
-
       ajaxPromise({
         type: 'post',
         url: getCurrentUrl() + api_url,
@@ -686,6 +685,7 @@
       };
 
       const api_url = w.API_URL && w.API_URL.BDAddAlarm;
+      debugger
 
       setTimeout(() => {
         console.log("api 请求成功==>");
