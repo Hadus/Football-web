@@ -419,7 +419,7 @@
     /* 方法：预警弹窗 */
     function audioAlert() {
       w.mesNode.classList.add('show');
-      w.mesContentNode.innerText = '是否开启预警提醒？';
+      w.mesContentNode.innerText = '是否开启告警提醒？';
       w.mesCallback = () => {
         d.querySelector('#s_audio_select').click();
       };
