@@ -48,7 +48,7 @@
     bindDragBox(); // 绑定拖拽
 
     // 提示用户选择是否开启预警
-    audioAlert();
+    // audioAlert();
 
     /* 方法：初始化 table */
     function initTable({ nodeStr_index = '', nodeStr_ttg = '' }) {
@@ -75,7 +75,6 @@
         warning: 0,
         danger: 0
       };
-
       listData_index.forEach((ele, index) => {
         // 本剧游戏是否投注
         // -1: 未投注
@@ -173,6 +172,7 @@
         const filterCondition_isBet = !w.isShowAllBet && ele.isBet === 1;
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
         // 过滤
+        
         if(filterCondition){
           if(!ele.crownBDRate){
             return;
@@ -192,7 +192,7 @@
               tdCLass_alert_level02 = 'tips yellow';
               break;
           }
-          nodeStr_index += `
+          nodeStr_ttg += `
             <div class="block">
               <div class="top">
                 <div class="competitionType">
@@ -253,6 +253,7 @@
         }
 
       })
+
       w.alertTimes = {
         warning: alert_times_index.warning + alert_times_ttg.warning,
         danger: alert_times_index.danger + alert_times_ttg.danger,
@@ -359,10 +360,14 @@
       }).then(res => {
         w.response = res;
         w.listData_index = res.data;
+        w.listData_ttg = res.dataBS;
         w.filter_ensureNode.click();
         if (w.isFirstTimeInitBet) {
+          const bet_params = {
+            
+          };
           refreshList_end();
-          refreshList_start();
+          refreshList_start(bet_params);
           // 每次请求重置
           w.isFirstTimeInitBet = false;
         }
@@ -391,10 +396,14 @@
       setTimeout(() => {
         w.response = w.mock.FootballBDData;
         w.listData_index = w.mock.FootballBDData.data;
+        w.listData_ttg = format_getData(w.mock.FootballBDData.dataBS);
         w.filter_ensureNode.click();
         if (w.isFirstTimeInitBet) {
+          const bet_params = {
+            
+          };
           refreshList_end();
-          refreshList_start();
+          refreshList_start(bet_params);
           // 每次请求重置
           w.isFirstTimeInitBet = false;
         }
@@ -406,6 +415,15 @@
       }, .5 * 1000);
     }
 
+    /* 方法： 处理 getData 的 json */
+    function format_getData(ttg_data) {
+      return ttg_data.map((ele,index) => {
+        const temp = {...ele.crownBdBSRate};
+        delete ele.crownBdBSRate;
+        ele.crownBDRate = {...temp};
+        return ele;
+      })
+    }
     /* 方法：播放音频 */
     function audioPlay() {
       w.audio_alert.pause();
