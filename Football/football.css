@@ -46,12 +46,6 @@ header .logo>span {
   color: #555;
 }
 
-header .loginout {
-  width: auto;
-  height: 100%;
-  float: right;
-}
-
 .bet {
   height: 40px;
   font-size: 14px;
