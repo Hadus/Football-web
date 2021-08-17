@@ -1033,7 +1033,6 @@
           hgLRateFormat01 = hgLRateFormat02.split(' ')[0];
           hgLRateFormat02 = hgLRateFormat02.split(' ')[1];
         }
-        debugger
         nodeStr += `
           <div>
             <label>请输入投注金额：
