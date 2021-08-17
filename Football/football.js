@@ -22,7 +22,8 @@
       mesContentNode: d.querySelector('#s_mesContent'), // mes content
       mesCallback: null, // mes 的回调函数
       isShowAllBet: true, // 是否显示所有已投注比赛
-      hideBetList: [], // 已投注的比赛列表
+      hideBetList_A: [], // 已投注的比赛列表
+      hideBetList_BS: [], // 已投注的比赛列表
       dialogNode: d.querySelector('#s_dialog'), // mes box
       dialogContentNode: d.querySelector('#s_dialogContent'), // mes box
       dialogData: null, // dialog 的数据
@@ -76,7 +77,7 @@
         // 本剧游戏是否投注
         // -1: 未投注
         // 1: 已投注
-        ele.isBet =  w.hideBetList.includes(ele.calcId)? 1 : -1;
+        ele.isBet =  w.hideBetList_A.includes(ele.matchId)? 1 : -1;
         const filterCondition_hasFilter = !getFlag_filters || (getFlag_filters && getFlag_filters(ele));
         const filterCondition_isBet = !w.isShowAllBet && ele.isBet === 1;
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
@@ -166,7 +167,7 @@
         // 本剧游戏是否投注
         // -1: 未投注
         // 1: 已投注
-        ele.isBet =  w.hideBetList.includes(ele.calcId)? 1 : -1;
+        ele.isBet =  w.hideBetList_BS.includes(ele.matchId)? 1 : -1;
         const filterCondition_hasFilter = !getFlag_filters || (getFlag_filters && getFlag_filters(ele));
         const filterCondition_isBet = !w.isShowAllBet && ele.isBet === 1;
         const filterCondition = filterCondition_hasFilter && !filterCondition_isBet;
@@ -213,7 +214,7 @@
                 </div>
                 <div class="is-bet">
                   不关注：
-                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
+                  <div class="s-is-bet-ttg switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
                 </div>
@@ -332,7 +333,7 @@
     function getData(bet_params) {
       changeBlockBetStatus({ // 修改比赛投注状态
         optType: 0,
-        hiddenCalcIds: []
+        hiddenMatchIds: []
       }, () => {
         // api：get 列表数据--静态调用 _file，API 调用 _api
         if (!w.location.host) {
@@ -498,12 +499,13 @@
       s_isBet_list_index.forEach((ele) => {
         ele.addEventListener('click', function (e) {
           const index = this.dataset['index'];
-          const calcId = this.dataset['calcId'];
+          const matchId = this.dataset['matchId'];
           listData_index[index].isBet  = listData_index[index].isBet * -1;
           this.classList.toggle('active'); // 放在 callback 外面有动画过渡
           changeBlockBetStatus({ // 修改比赛投注状态
             optType: listData_index[index].isBet,
-            hiddenCalcIds: [calcId]
+            hiddenMatchIds: [matchId],
+            matchType: 0
           }, () => {
             w.filterWithoutAudio = true;
             w.filter_ensureNode.click();
@@ -514,12 +516,13 @@
       s_isBet_list_ttg.forEach((ele) => {
         ele.addEventListener('click', function (e) {
           const index = this.dataset['index'];
-          const calcId = this.dataset['calcId'];
+          const matchId = this.dataset['matchId'];
           listData_ttg[index].isBet  = listData_ttg[index].isBet * -1;
           this.classList.toggle('active');  // 放在 callback 外面有动画过渡
           changeBlockBetStatus({ // 修改比赛投注状态
             optType: listData_ttg[index].isBet,
-            hiddenCalcIds: [calcId]
+            hiddenMatchIds: [matchId],
+            matchType: 1
           }, () => {
             w.filter_ensureNode.click();
             w.filterWithoutAudio = true;
@@ -546,11 +549,13 @@
       let data = params && {
         userId: '',
         optType: params.optType,
-        hiddenCalcIds: params.hiddenCalcIds
+        hiddenMatchIds: params.hiddenMatchIds,
+        matchType: params.matchType
       } || {
         userId: '',
         optType: 0,
-        hiddenCalcIds: []
+        hiddenMatchIds: [],
+        matchType: null
       };
 
       const api_url = w.API_URL && w.API_URL.staticValues;
@@ -560,7 +565,8 @@
         url: getCurrentUrl() + api_url,
         data
       }).then(res => {
-        w.hideBetList = res.hiddenCalcIds;
+        w.hideBetList_A = res.hiddenAMatchIds;
+        w.hideBetList_BS = res.hiddenBSMatchIds;
         callback();
       }).catch(err => {
         console.log("请求失败==>" + err);
@@ -578,17 +584,19 @@
       let data = params && {
         userId: '',
         optType: params.optType,
-        hiddenCalcIds: params.hiddenCalcIds
+        hiddenMatchIds: params.hiddenMatchIds,
+        matchType: params.matchType
       } || {
         userId: '',
         optType: 0,
-        hiddenCalcIds: []
+        hiddenMatchIds: [],
+        matchType: null
       };
-
       const api_url = w.API_URL && w.API_URL.staticValues;
 
       setTimeout(() => {
-        w.hideBetList = w.mock.StatusData.hiddenCalcIds;
+        w.hideBetList_A = w.mock.StatusData.hiddenAMatchIds;
+        w.hideBetList_BS = w.mock.StatusData.hiddenBSMatchIds;
         callback();
       }, .5 * 1000);
     }
@@ -624,18 +632,28 @@
     } 
 
     /* 方法：获取数据 */
-    function getCalculator(params, outputNodeList) {
+    function getCalculator(params) {
       // api：get 列表数据--静态调用 _file，API 调用 _api
       if (!w.location.host) {
-        getCalculator_file(params, outputNodeList);
+        getCalculator_file(params);
       } else {
-        getCalculator_api(params, outputNodeList);
+        getCalculator_api(params);
       }
     }
 
     /* 方法：api 计算 */
     function getCalculator_api(params) {
-      let data = params || {};
+      let data = params || {
+        matchId : params.matchId,
+        matchType : params.matchId, 
+        alarmH : params.matchId.alarmH,
+        alarmA : params.matchId.alarmA
+      } || {
+        matchId : '',
+        matchType : 0, //0 亚盘， 1-大小球
+        alarmH : '',
+        alarmA : ''
+      };
 
       const api_url = w.API_URL && w.API_URL.BDAddAlarm;
 
@@ -655,7 +673,17 @@
 
     /* 方法：本地 计算 */
     function getCalculator_file(params) {
-      let data = params || {};
+      let data = params || {
+        matchId : params.matchId,
+        matchType : params.matchId, 
+        alarmH : params.matchId.alarmH,
+        alarmA : params.matchId.alarmA
+      } || {
+        matchId : '',
+        matchType : 0, //0 亚盘， 1-大小球
+        alarmH : '',
+        alarmA : ''
+      };
 
       const api_url = w.API_URL && w.API_URL.BDAddAlarm;
 
@@ -668,7 +696,6 @@
     /* 方法：获取 dialog 数据用于计算请求 */
     function getDialogDataForCalculator() {
       const inputNodeList = dialogContentNode.querySelectorAll('input[data-input-key]');      
-      const outputNodeList = dialogContentNode.querySelectorAll('input[data-output-key]');
       const inputValueList = {};
       inputNodeList.forEach((ele) => {
         const key = ele.dataset['inputKey']; // 请求的input 框
@@ -680,75 +707,21 @@
       });
 
       let res_params = {
-        jzPayAmount: inputValueList.jzPayAmount,
-        isUserCalc: true,
-        calcId: w.dialogData.calcId,
-        userCalcReq: {}
+        matchId: w.dialogData.matchId,
+        alarmH : inputValueList.alarmH || null,
+        alarmA : inputValueList.alarmA || null
       };
 
       if(showTableName === 'index'){
-        // 欧赔 或者 亚赔
-        if(w.dialogData.hgPDisplay == ''){ // 欧赔
-          console.log('欧赔')
-          res_params.userCalcReq = {
-            crownERate: {
-              rateD: inputValueList.hgPValue,
-              rateL: inputValueList.hgLRate,
-              rateW: inputValueList.hgWRate
-            }
-          };
-        } else{ // 亚赔
-          console.log('亚赔')
-          res_params.userCalcReq = {
-            crownARate: {
-              point: inputValueList.hgPValue, // hgPValue
-              rateA: inputValueList.hgLRate,
-              rateD: inputValueList.hgDRate,
-              rateH: inputValueList.hgWRate
-            }
-          };
-        }
-        // 让球 或者 胜平负
-        if(inputValueList.jzPValue == '0' || inputValueList.jzPValue == 0){ // 胜平负
-          console.log('胜平负');
-          res_params.userCalcReq.jzRate = {
-            hasJzDate: true,
-            hasJzRDate: false,
-            point: Number(inputValueList.jzPValue) + '', // 去掉 + 号
-            rateD: inputValueList.jzDRate,
-            rateL: inputValueList.jzLRate,
-            rateW: inputValueList.jzWRate
-          }
-        } else{ // 让球
-          console.log('让球')
-          res_params.userCalcReq.jzRate = {
-            hasJzDate: false,
-            hasJzRDate: true,
-            point: Number(inputValueList.jzPValue) + '', // 去掉 + 号
-            rateRD: inputValueList.jzDRate,
-            rateRL: inputValueList.jzLRate,
-            rateRW: inputValueList.jzWRate,
-          }
-        }
+        res_params.matchType = 0;
+       
       } else if(showTableName === 'ttg'){
-        res_params.userCalcReq = {
-          crownBSRate: {
-            point: inputValueList.hgPValue, // hgPValue
-            rateBig: inputValueList.hgWRate,
-            rateSmall: inputValueList.hgLRate
-          },
-          jzBSRate: {
-            s0: inputValueList.jzS0Rate,
-            s1: inputValueList.jzS1Rate,
-            s2: inputValueList.jzS2Rate,
-            s3: inputValueList.jzS3Rate,
-          }
-        };
+        res_params.matchType = 1;
+        
       }
       console.log(res_params);
       return {
         res_params,
-        outputNodeList,
       }
     }
 
@@ -760,8 +733,10 @@
       const inputNodeList = dialogContentNode.querySelectorAll('input[data-input-key]');      
       inputNodeList.forEach((ele) => {
         // ele.classList.remove('danger');
-        if(ele.dataset['inputKey'] === 'jzPayAmount' && !ele.value.trim()){
-          invaildInputObj['jzPayAmount'] = ele;
+        const key = ele.dataset['inputKey'];
+        const valid = ele.dataset['inputValid'];
+        if(ele.value.trim() === valid.trim()){
+          invaildInputObj[key] = ele;
           invaildInputObj['length']++;
           // ele.classList.add('danger');
         }
@@ -770,35 +745,9 @@
     }
 
     /* 方法：calculator 接口数据请求完成后的 callback */
-    function callback_calculator(res, outputNodeList) {
-      const keyList = {};
-      outputNodeList.forEach((ele) => {
-        const key = ele.dataset['outputKey'];
-        keyList[key] = ele;
-      })
-      if(w.showTableName === 'index'){
-        const ele = res.data[0];
-        keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
-        keyList['jzWPayAmount'].value = ele.jzWPayAmount>0? ele.jzWPayAmount : '';
-        keyList['jzDPayAmount'].value = ele.jzDPayAmount>0? ele.jzDPayAmount : '';
-        keyList['hgWPayAmount'].value = ele.hgWPayAmount>0? ele.hgWPayAmount : '';
-        keyList['hgDPayAmount'].value = ele.hgDPayAmount>0? ele.hgDPayAmount : '';
-        keyList['hgLPayAmount'].value = ele.hgLPayAmount>0? ele.hgLPayAmount : '';
-        keyList['totalBenefitAmount'].value = ele.totalBenefitAmount!=0? ele.totalBenefitAmount : '';
-      } else if(w.showTableName === 'ttg'){
-        const ele = res.ttgData[0];
-        keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
-        keyList['jzS0PayAmount'].value = ele.jzS0PayAmount>0? ele.jzS0PayAmount : '';
-        keyList['jzS1PayAmount'].value = ele.jzS1PayAmount>0? ele.jzS1PayAmount : '';
-        keyList['jzS2PayAmount'].value = ele.jzS2PayAmount>0? ele.jzS2PayAmount : '';
-        keyList['jzS3PayAmount'].value = ele.jzS3PayAmount>0? ele.jzS3PayAmount : '';
-        keyList['hgWPayAmount'].value = ele.hgWPayAmount>0? ele.hgWPayAmount : '';
-        keyList['totalBenefitAmount'].value = ele.totalBenefitAmount!=0? ele.totalBenefitAmount : '';
-        keyList['jzS0BenefitAmount'].value = ele.jzS0BenefitAmount>0? ele.jzS0BenefitAmount : '';
-        keyList['jzS1BenefitAmount'].value = ele.jzS1BenefitAmount>0? ele.jzS1BenefitAmount : '';
-        keyList['jzS2BenefitAmount'].value = ele.jzS2BenefitAmount>0? ele.jzS2BenefitAmount : '';
-        keyList['hgWBenefitAmount'].value = ele.hgWBenefitAmount>0? ele.hgWBenefitAmount : '';
-      }
+    function callback_calculator(res) {
+      getData();
+      bindCancleDialog();
     }
 
     /* 方法：message 取消 */  
@@ -834,11 +783,11 @@
       d.querySelector('#s_ensureDialog').addEventListener('click',function (e) {
         const invaildInputObj = validCalculatorInput();
         if(invaildInputObj.length){
-          alert('请输入投注金额！');
+          alert('设置的赔率不能等于已有赔率！');
           return;
         };
-        const {res_params, outputNodeList} = getDialogDataForCalculator();
-        getCalculator(res_params, outputNodeList);
+        const {res_params} = getDialogDataForCalculator();
+        getCalculator(res_params);
       })
     }
 
@@ -872,7 +821,7 @@
                 <input data-input-key="test1" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
               </label>
               <label>point：
-                <input class="big" type="number" value="${userPoint}">
+                <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
               </label>
               <label>客队（<b><i>${ele.teamNameA}</i></b>）：
                 <input data-input-key="test2" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
@@ -903,7 +852,7 @@
                 <input data-input-key="test1" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
               </label>
               <label>point：
-                <input class="big" type="number" value="${userPoint}">
+                <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
               </label>
               <label>客队（<b><i>${ele.teamNameA}</i></b>）：
                 <input data-input-key="test2" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
