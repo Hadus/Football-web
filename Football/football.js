@@ -97,7 +97,7 @@
               break;
             case 2:
               tdCLass_alert_level01 = '';
-              tdCLass_alert_level02 = 'tips yellow';
+              tdCLass_alert_level02 = 'tips red';
               break;
           }
           nodeStr_index += `
