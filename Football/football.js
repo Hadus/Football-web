@@ -46,7 +46,7 @@
     bindDragBox(); // 绑定拖拽
 
     // 提示用户选择是否开启预警
-    // audioAlert();
+    audioAlert();
 
     /* 方法：初始化 table */
     function initTable({ nodeStr_index = '', nodeStr_ttg = '' }) {
