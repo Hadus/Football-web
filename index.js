@@ -19,6 +19,7 @@ function initJS() {
   const jsFileList = [
     './JS/utils.js',
     './JS/api.js',
+    './Config/config.js',
     './Football/football.js'
   ];
 
@@ -46,6 +47,9 @@ function initJSON() {
 
 window.onload = function () {
   if (!window.location.host) {
+    Object.assign(window, {
+      mock: {}
+    });
     initJSON();
   }
   initJS();

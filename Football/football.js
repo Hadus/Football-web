@@ -1,6 +1,6 @@
 (
   function (w, d) {
-    Object.assign(w, {
+    Object.assign(w, {...w.config}, {
       tableNode_index: d.querySelector('#s_table_index'), // 列表的 table
       tableNode_ttg: d.querySelector('#s_table_ttg'), // 列表的 table
       s_bet: d.querySelector('#s_bet'), // bet
@@ -8,12 +8,9 @@
       listData_index: [], // 数据
       listData_ttg: [], // 数据
       clock: null, // 自动刷新定时器
-      refreshFreqTime: 20, // 秒
       isFirstTimeInitBet: true, // 第一次进来界面才会initBet
       getFlag_filters: null, // 过滤条件
       filter_ensureNode: d.querySelector('#s_filter').querySelector('button'),
-      middleBenefitPoint: '1.0',
-      hightBenefitPoint: '2.0',
       audio_alert: new Audio(w.ALERT_AUDIO_URL || ''), // 音频对象
       alertTimes: { // 需要报警的次数
         warning: 0,
@@ -98,7 +95,7 @@
           let tdClass_totalBenefitPoint = '';
           // 需要判断 空 或者 0 吗
           if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red';
+            tdClass_totalBenefitPoint = 'tips red flash';
             ele.isBet === -1 && alert_times_index.danger++;
           } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
             tdClass_totalBenefitPoint = 'tips yellow';
@@ -143,13 +140,13 @@
                     <th width="16%" colspan="1">利润</th>
                   </tr>
                   <tr>
-                    <td class="trend ${tdClass_jzPValue}" width="6%">${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}</td>
-                    <td class="trend ${ele.changeJzWRate&&(ele.changeJzWRate>0?'trend-up':'trend-down')} ${ele.jzWHighlight?'red':''}" width="16%">${ele.jzWRate}</td>
+                    <td class="trend ${tdClass_jzPValue}" width="5%">${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}</td>
+                    <td class="trend ${ele.changeJzWRate&&(ele.changeJzWRate>0?'trend-up':'trend-down')} ${ele.jzWHighlight?'red':''}" width="10%">${ele.jzWRate}</td>
                     <td class="trend ${ele.changeJzDRate&&(ele.changeJzDRate>0?'trend-up':'trend-down')} ${ele.jzDHighlight?'red':''}" width="10%">${ele.jzDRate}</td>
-                    <td class="trend ${ele.changeJzLRate&&(ele.changeJzLRate>0?'trend-down':'trend-up')} ${ele.jzLHighlight?'red':''}" width="11%">${ele.jzLRate}</td>
-                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}" width="13%">${ele.hgWRate}</td>
-                    <td class="trend ${ele.changeHgDRate&&(ele.changeHgDRate>0?'trend-up':'trend-down')} ${ele.hgDHighlight?'red':''}" width="16%">${ele.hgPDisplay == ''? ele.hgDRate : ele.hgPDisplay}</td>
-                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}" width="12%">${ele.hgLRate}</td>
+                    <td class="trend ${ele.changeJzLRate&&(ele.changeJzLRate>0?'trend-down':'trend-up')} ${ele.jzLHighlight?'red':''}" width="10%">${ele.jzLRate}</td>
+                    <td class="trend ${ele.changeHgWRate&&(ele.changeHgWRate>0?'trend-up':'trend-down')} ${ele.hgWHighlight?'red':''}" width="10%">${ele.hgWRate}</td>
+                    <td class="trend ${ele.changeHgDRate&&(ele.changeHgDRate>0?'trend-up':'trend-down')} ${ele.hgDHighlight?'red':''}" width="18%">${ele.hgPDisplay == ''? ele.hgDRate : ele.hgPDisplay}</td>
+                    <td class="trend ${ele.changeHgLRate&&(ele.changeHgLRate>0?'trend-up':'trend-down')} ${ele.hgLHighlight?'red':''}" width="18%">${ele.hgLRate}</td>
                     <td class="${tdClass_totalBenefitPoint}">${ele.totalBenefitPoint||''}</td>
                   </tr>
                   <tr>
@@ -181,7 +178,7 @@
           let tdClass_totalBenefitPoint = '';
           // 需要判断 空 或者 0 吗
           if(ele.totalBenefitPoint > Number(hightBenefitPoint)){ // 报警利润
-            tdClass_totalBenefitPoint = 'tips red';
+            tdClass_totalBenefitPoint = 'tips red flash';
             ele.isBet === -1 && alert_times_ttg.danger++;
           } else if(ele.totalBenefitPoint > Number(middleBenefitPoint)){ // 跟踪利润
             tdClass_totalBenefitPoint = 'tips yellow';
@@ -553,19 +550,19 @@
       const url_getData = w.API_URL && w.API_URL.getData;
 
       setTimeout(() => {
-        w.response = res;
-        w.listData_index = res.data;
-        w.listData_ttg = res.ttgData;
+        w.response = w.mock.res;
+        w.listData_index = w.mock.res.data;
+        w.listData_ttg = w.mock.res.ttgData;
         w.filter_ensureNode.click();
         if (isFirstTimeInitBet) {
           const bet_params = {
-            jzPayAmount: res.jzPayAmount,
-            jzRebatePoint: res.jzRebatePoint,
-            hgERebatePoint: res.hgERebatePoint,
-            hgARebatePoint: res.hgARebatePoint,
-            refreshFreq: res.refreshFreq,
+            jzPayAmount: w.mock.res.jzPayAmount,
+            jzRebatePoint: w.mock.res.jzRebatePoint,
+            hgERebatePoint: w.mock.res.hgERebatePoint,
+            hgARebatePoint: w.mock.res.hgARebatePoint,
+            refreshFreq: w.mock.res.refreshFreq,
           };
-          w.refreshFreqTime = res.refreshFreq;
+          w.refreshFreqTime = w.mock.res.refreshFreq;
           initBet(bet_params);
           refreshList_end();
           refreshList_start(bet_params);
@@ -621,24 +618,21 @@
 
     /* 方法：绑定 tabs */
     function bindTabs() {
-      const s_tabs = d.querySelector('#s_tabsBox');
-      const s_lis = s_tabs.querySelectorAll('li');
-      const s_table_index = d.querySelector('#s_table_index');
-      const s_table_ttg = d.querySelector('#s_table_ttg');
-      s_lis.forEach((ele) => {
+      const s_tab_List = d.querySelectorAll('#s_tabsBox>li');
+      const s_tabContent_list = d.querySelectorAll('div>.table');
+      s_tab_List.forEach((ele, index) => {
         ele.addEventListener('click', function (e) {
-          if(this.dataset['index'] === w.showTableName){
+          const tabName = ele.dataset['tab'];
+          if(tabName === w.showTabName){
             return false;
           }
-          s_lis.forEach((ele_inner) => {
-            ele_inner.classList.remove('active');
-            w.showTableName = this.dataset['index'];
+          s_tabContent_list.forEach((ele_inner, index_inner) => {
+            ele_inner.classList.remove('show');
+            s_tab_List[index_inner].classList.remove('active');
           })
-
-          this.classList.add('active');
-          
-          s_table_index.classList.toggle('hide');
-          s_table_ttg.classList.toggle('hide');
+          s_tabContent_list[index].classList.add('show');
+          ele.classList.add('active');
+          w.showTabName = tabName;
         })
       })
     }
@@ -755,7 +749,7 @@
       const api_url = w.API_URL && w.API_URL.staticValues;
 
       setTimeout(() => {
-        w.hideBetList = StatusData.hiddenCalcIds;
+        w.hideBetList = w.mock.StatusData.hiddenCalcIds;
         callback();
       }, .5 * 1000);
     }
@@ -828,7 +822,7 @@
 
       setTimeout(() => {
         console.log("api 请求成功==>");
-        callback_calculator(w.calculatorData, outputNodeList);
+        callback_calculator(w.mock.CalculatorData, outputNodeList);
       }, .5 * 1000);
     }
 
@@ -870,6 +864,7 @@
             crownARate: {
               point: inputValueList.hgPValue, // hgPValue
               rateA: inputValueList.hgLRate,
+              rateD: inputValueList.hgDRate,
               rateH: inputValueList.hgWRate
             }
           };
@@ -1030,12 +1025,17 @@
       const ele = w.dialogData = Object.assign({}, obj);
       let nodeStr = '';
       if(showTableName === 'index'){
+        let hgLRateFormat02 = ele.hgLRate.trim(),hgLRateFormat01 = '';
+        if(hgLRateFormat02.includes(' ')){
+          hgLRateFormat01 = hgLRateFormat02.split(' ')[0];
+          hgLRateFormat02 = hgLRateFormat02.split(' ')[1];
+        }
         nodeStr += `
           <div>
             <label>请输入投注金额：
               <input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元
             </label>
-          </div>
+          </div></br>
           <div class="block">
             <div class="top">
               <div class="competitionType">
@@ -1064,33 +1064,35 @@
                   <th width="20%" colspan="1">利润</th>
                 </tr>
                 <tr>
-                  <td width="6%">
+                  <td width="5%">
                     <input type="text" disabled data-input-key="jzPValue" value=${ele.jzPValue > 0 ? "+" + ele.jzPValue : ele.jzPValue}>
                   </td>
                   <td width="10%">
                     <input type="number" data-input-key="jzWRate" value=${ele.jzWRate||''}>
                   </td>
-                  <td width="16%">
+                  <td width="10%">
                     <input type="number" data-input-key="jzDRate" value=${ele.jzDRate||''}>
                   </td>
-                  <td width="11%">
+                  <td width="10%">
                     <input type="number" data-input-key="jzLRate" value=${ele.jzLRate||''}>
                   </td>
-                  <td width="13%">
+                  <td width="10%">
                     <input type="number" data-input-key="hgWRate" value=${ele.hgWRate||''}>
                   </td>
-                  <td width="16%">
-                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" value=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}>
+                  <td width="18%">
+                    <input type=${ele.hgPDisplay===''?'number':'text'}" ${ele.hgPDisplay===''?'':'disabled'} data-input-key="hgPValue" data-input-res=${ele.hgPDisplay===''?ele.hgDRate:ele.hgPValue} value="${ele.hgPDisplay===''?ele.hgDRate:ele.hgPDisplay}">
+                    <input type="number" class="hide" disabled data-input-key="hgDRate" value=${ele.hgDRate}>
                   </td>
-                  <td width="12%">
-                    <input type="number" data-input-key="hgLRate" value=${ele.hgLRate||''}>
+                  <td width="18%">
+                    <output>${hgLRateFormat01}</output>
+                    <input type="number" class="${hgLRateFormat01&&'small'}" data-input-key="hgLRate" value=${hgLRateFormat02||''}>
                   </td>
                   <td>
                     <input type="number" data-output-key="totalBenefitPoint" disabled value=${ele.totalBenefitPoint||''}>
                   </td>
                 </tr>
                 <tr>
-                  <td class="hide"></td>
+                  <td class="v-hide"></td>
                   <td class="bold">
                     <input type="number" data-output-key="jzWPayAmount" disabled value=${ele.jzWPayAmount>0? ele.jzWPayAmount : ''}>
                   </td>
@@ -1121,7 +1123,7 @@
         nodeStr += `
           <div>
             <label>请输入投注金额：<input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元</label>
-          </div>
+          </div></br>
           <div class="block">
             <div class="top">
               <div class="competitionType">
