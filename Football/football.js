@@ -91,13 +91,15 @@
               tdCLass_alert_level01 = '';
               tdCLass_alert_level02 = '';
               break;
-            case 1:
+            case 2: // 二级提醒存在的话，一级不再提醒
               tdCLass_alert_level01 = 'tips yellow flash';
               tdCLass_alert_level02 = '';
+              alert_times_index.danger++;
               break;
-            case 2:
+            case 1:
               tdCLass_alert_level01 = '';
-              tdCLass_alert_level02 = 'tips red';
+              tdCLass_alert_level02 = 'tips red flash';
+              alert_times_index.warning++;
               break;
           }
           nodeStr_index += `
@@ -180,13 +182,15 @@
               tdCLass_alert_level01 = '';
               tdCLass_alert_level02 = '';
               break;
-            case 1:
+            case 2: // 二级提醒存在的话，一级不再提醒
               tdCLass_alert_level01 = 'tips yellow flash';
               tdCLass_alert_level02 = '';
+              alert_times_ttg.danger++;
               break;
-            case 2:
+            case 1:
               tdCLass_alert_level01 = '';
-              tdCLass_alert_level02 = 'tips yellow';
+              tdCLass_alert_level02 = 'tips red flash';
+              alert_times_ttg.warning++;
               break;
           }
           nodeStr_ttg += `
@@ -262,16 +266,16 @@
       s_lis[1].classList.remove('tips','red','yellow');
 
       if(alert_times_index.danger > 0){
-        s_lis[0].classList.add('tips','red');
+        s_lis[0].classList.add('tips','red','flash');
       } else if(alert_times_index.warning > 0){
-        s_lis[0].classList.add('tips','yellow');
+        s_lis[0].classList.add('tips','yellow','flash');
       }
       if(alert_times_ttg.danger > 0){
-        s_lis[1].classList.add('tips','red');
+        s_lis[1].classList.add('tips','red','flash');
       } else if(alert_times_ttg.warning > 0){
-        s_lis[1].classList.add('tips','yellow');
+        s_lis[1].classList.add('tips','yellow','flash');
       }
-      if(!w.filterWithoutAudio && w.isPlayAudio && w.alertTimes.danger){
+      if(!w.filterWithoutAudio && w.isPlayAudio && (w.alertTimes.danger || w.alertTimes.warning)){
         audioPlay(); // 播放音频
       }
       w.filterWithoutAudio = false; // 判断音频是否播放完成，分离 isBet

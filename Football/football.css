@@ -141,10 +141,6 @@ body>div {
   text-align: center;
 }
 
-.list>.table-ttg>.block>.top>div.teams {
-  width: 20%;
-}
-
 .block>.top>div.teams>.icon-vs {
   display: inline-block;
   width: 22px;
@@ -368,6 +364,7 @@ body>div {
 .tabs>.tab-bar>ul>li {
   display: inline-block;
   min-width: 80px;
+  padding: 0 10px;
   height: 100%;
   cursor: pointer;
   border: 1px solid #ccc;
