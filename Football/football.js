@@ -3,7 +3,6 @@
     Object.assign(w, {
       tableNode_index: d.querySelector('#s_table_index'), // 列表的 table
       tableNode_ttg: d.querySelector('#s_table_ttg'), // 列表的 table
-      s_bet: d.querySelector('#s_bet'), // bet
       response: {}, // API返回值
       listData_index: [], // 数据
       listData_ttg: [], // 数据
@@ -38,8 +37,6 @@
     });
 
     getData();
-    initBetConst();
-    bindBet(betAction);
     bindFilter(filterAction);
     bindSwitchAudio();
     bindTabs();
@@ -80,10 +77,6 @@
         danger: 0
       };
 
-      const s_hightBenefitPoint = s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = s_bet.querySelector('#s_middleBenefitPoint');
-      const hightBenefitPoint = s_hightBenefitPoint.nowValue || s_hightBenefitPoint.value;
-      const middleBenefitPoint = s_middleBenefitPoint.nowValue || s_middleBenefitPoint.value;
       listData_index.forEach((ele, index) => {
         // 本剧游戏是否投注
         // -1: 未投注
@@ -291,115 +284,6 @@
       };
     }
 
-    /* 方法：绑定投注事件 */
-    function bindBet(callback) {
-      const s_jzPayAmount = s_bet.querySelector('#s_jzPayAmount');
-      const s_jzRebatePoint = s_bet.querySelector('#s_jzRebatePoint');
-      const s_hgERebatePoint = s_bet.querySelector('#s_hgERebatePoint');
-      const s_hgARebatePoint = s_bet.querySelector('#s_hgARebatePoint');
-      const s_refreshFreq = s_bet.querySelector('#s_refreshFreq');
-      const s_hightBenefitPoint = s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = s_bet.querySelector('#s_middleBenefitPoint');
-      const s_bet_ensure = s_bet.querySelector('button');
-
-      s_bet_ensure.addEventListener('click', (e) => {
-        isFirstTimeInitBet = false;
-        const betObj = {
-          jzPayAmount: s_jzPayAmount.value.trim(),
-          jzRebatePoint: s_jzRebatePoint.value.trim(),
-          hgERebatePoint: s_hgERebatePoint.value.trim(),
-          hgARebatePoint: s_hgARebatePoint.value.trim(),
-        };
-        w.s_bet.querySelector('#s_hightBenefitPoint').nowValue = s_hightBenefitPoint.value.trim();
-        w.s_bet.querySelector('#s_middleBenefitPoint').nowValue = s_middleBenefitPoint.value.trim();
-        const refreshFreq = s_refreshFreq.value;
-        if (!getValidBet({ ...betObj, refreshFreq })) {
-          return;
-        }
-        if (Number(s_refreshFreq.value) >= 1) {
-          w.refreshFreqTime = Math.ceil(Number(s_refreshFreq.value));
-        }
-        callback(betObj);
-      })
-    }
-
-    /* 方法：投注处理---点击按钮触发 */
-    function betAction(bet_params) {
-      getData(bet_params);
-      refreshList_end();
-      refreshList_start(bet_params);
-    }
-
-    /* 方法：初始化 投注 */
-    function initBet(params) {
-      const s_jzPayAmount = s_bet.querySelector('#s_jzPayAmount');
-      const s_jzRebatePoint = s_bet.querySelector('#s_jzRebatePoint');
-      const s_hgERebatePoint = s_bet.querySelector('#s_hgERebatePoint');
-      const s_hgARebatePoint = s_bet.querySelector('#s_hgARebatePoint');
-      const s_refreshFreq = s_bet.querySelector('#s_refreshFreq');
-      s_jzPayAmount.value = params.jzPayAmount;
-      s_jzRebatePoint.value = params.jzRebatePoint;
-      s_hgERebatePoint.value = params.hgERebatePoint;
-      s_hgARebatePoint.value = params.hgARebatePoint;
-      s_refreshFreq.value = params.refreshFreq;
-    }
-
-    /* 方法：初始化 投注的定值 */
-    function initBetConst() {
-      const s_hightBenefitPoint = s_bet.querySelector('#s_hightBenefitPoint');
-      const s_middleBenefitPoint = s_bet.querySelector('#s_middleBenefitPoint');
-      s_middleBenefitPoint.value = w.middleBenefitPoint;
-      s_hightBenefitPoint.value = w.hightBenefitPoint;
-    }
-
-    /* 方法：bet 校验 */
-    function getValidBet(params) {
-      const hightBenefitPoint = w.s_bet.querySelector('#s_hightBenefitPoint').nowValue || w.hightBenefitPoint;
-      const middleBenefitPoint = w.s_bet.querySelector('#s_middleBenefitPoint').nowValue || w.middleBenefitPoint;
-      const validBetObj = {
-        jzPayAmount: Number(params.jzPayAmount),
-        jzRebatePoint: Number(params.jzRebatePoint),
-        hgERebatePoint: Number(params.hgERebatePoint),
-        hgARebatePoint: Number(params.hgARebatePoint),
-        hightBenefitPoint: Number(hightBenefitPoint),
-        middleBenefitPoint: Number(middleBenefitPoint),
-        refreshFreq: Number(params.refreshFreq),
-      };
-      if (validBetObj.jzPayAmount&&!validBetObj.jzPayAmount) {
-        alert('体彩投注格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.jzRebatePoint&&!validBetObj.jzRebatePoint) {
-        alert('体彩返点格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.hgERebatePoint&&!validBetObj.hgERebatePoint) {
-        alert('皇冠返点格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.hgARebatePoint&&!validBetObj.hgARebatePoint) {
-        alert('皇冠让球返点格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.hightBenefitPoint&&!validBetObj.hightBenefitPoint) {
-        alert('预警利润格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.middleBenefitPoint&&!validBetObj.middleBenefitPoint) {
-        alert('跟踪利润格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.refreshFreq&&!validBetObj.refreshFreq) {
-        alert('刷新频率格式错误，请输入数字。。');
-        return false;
-      }
-      if (validBetObj.refreshFreq&&validBetObj.refreshFreq < 0) {
-        alert('刷新频率需 > 0，请重新输入。。');
-        return false;
-      }
-      return true;
-    }
-
     /* 方法：绑定筛选事件 */
     function bindFilter(callback) {
       const s_filter = d.querySelector('#s_filter');
@@ -462,7 +346,7 @@
     }
 
     /* 方法：api 获取数据 */
-    function getData_api() {
+    function getData_api(bet_params) {
       // api：get 列表数据
       let data = {
         needFresh: false,
@@ -498,7 +382,7 @@
     }
 
     /* 方法：本地 获取数据 */
-    function getData_file() {
+    function getData_file(bet_params) {
       // api：get 列表数据
       let data = {
         needFresh: false,
