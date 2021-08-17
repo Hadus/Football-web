@@ -19,6 +19,7 @@ function initJS() {
   const jsFileList = [
     './JS/utils.js',
     './JS/api.js',
+    './Config/config.js',
     './Football/football.js'
   ];
 

@@ -1,6 +1,6 @@
 (
   function (w, d) {
-    Object.assign(w, {
+    Object.assign(w, {...w.config}, {
       tableNode_index: d.querySelector('#s_table_index'), // 列表的 table
       tableNode_ttg: d.querySelector('#s_table_ttg'), // 列表的 table
       s_bet: d.querySelector('#s_bet'), // bet
@@ -8,12 +8,9 @@
       listData_index: [], // 数据
       listData_ttg: [], // 数据
       clock: null, // 自动刷新定时器
-      refreshFreqTime: 20, // 秒
       isFirstTimeInitBet: true, // 第一次进来界面才会initBet
       getFlag_filters: null, // 过滤条件
       filter_ensureNode: d.querySelector('#s_filter').querySelector('button'),
-      middleBenefitPoint: '1.0',
-      hightBenefitPoint: '2.0',
       audio_alert: new Audio(w.ALERT_AUDIO_URL || ''), // 音频对象
       alertTimes: { // 需要报警的次数
         warning: 0,
