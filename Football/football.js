@@ -646,8 +646,8 @@
       let data = params && {
         matchId : params.matchId,
         matchType : params.matchId, 
-        alarmH : params.matchId.alarmH,
-        alarmA : params.matchId.alarmA
+        alarmH : params.alarmH,
+        alarmA : params.alarmA
       } || {
         matchId : '',
         matchType : 0, //0 亚盘， 1-大小球
@@ -675,8 +675,8 @@
       let data = params && {
         matchId : params.matchId,
         matchType : params.matchId, 
-        alarmH : params.matchId.alarmH,
-        alarmA : params.matchId.alarmA
+        alarmH : params.alarmH,
+        alarmA : params.alarmA
       } || {
         matchId : '',
         matchType : 0, //0 亚盘， 1-大小球
@@ -684,7 +684,7 @@
         alarmA : ''
       };
       const api_url = w.API_URL && w.API_URL.BDAddAlarm;
-
+      console.log(data);
       setTimeout(() => {
         console.log("api 请求成功==>");
         callback_calculator(w.mock.BDAddAlarmData);
@@ -717,7 +717,6 @@
         res_params.matchType = 1;
         
       }
-      console.log(res_params);
       return {
         res_params,
       }
