@@ -40,7 +40,6 @@
     bindFilter(filterAction);
     bindSwitchAudio();
     bindTabs();
-    // bindForceRefresh(); // 绑定强制刷新
     bindShowAllBet(); // 绑定显示所有已投注
     bindCancleMes(); // 弹窗-取消mes
     bindEnsureMes(); // 弹窗-确定mes
@@ -790,23 +789,6 @@
         keyList['jzS2BenefitAmount'].value = ele.jzS2BenefitAmount>0? ele.jzS2BenefitAmount : '';
         keyList['hgWBenefitAmount'].value = ele.hgWBenefitAmount>0? ele.hgWBenefitAmount : '';
       }
-    }
-    /* 方法：强制刷新数据 */  
-    function bindForceRefresh() {
-      d.querySelector('#s_forceRefresh').addEventListener('click',function (e) {
-        w.mesNode.classList.add('show');
-        w.mesContentNode.innerText = '确定强制刷新后台数据吗？';
-        w.mesCallback = forceRefreshAction;
-        pageScroll(false);
-      })
-    }
-
-    /* 方法：强制刷新处理---点击按钮触发 */
-    function forceRefreshAction(params) {
-      console.log('发请求');
-      getData({
-        needFresh: true
-      });
     }
 
     /* 方法：message 取消 */  
