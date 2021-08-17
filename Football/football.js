@@ -92,13 +92,13 @@
               tdCLass_alert_level02 = '';
               break;
             case 2: // 二级提醒存在的话，一级不再提醒
-              tdCLass_alert_level01 = 'tips yellow flash';
-              tdCLass_alert_level02 = '';
+              tdCLass_alert_level01 = '';
+              tdCLass_alert_level02 = 'tips red flash';
               alert_times_index.danger++;
               break;
             case 1:
-              tdCLass_alert_level01 = '';
-              tdCLass_alert_level02 = 'tips red flash';
+              tdCLass_alert_level01 = 'tips yellow flash';
+              tdCLass_alert_level02 = '';
               alert_times_index.warning++;
               break;
           }
@@ -183,13 +183,13 @@
               tdCLass_alert_level02 = '';
               break;
             case 2: // 二级提醒存在的话，一级不再提醒
-              tdCLass_alert_level01 = 'tips yellow flash';
-              tdCLass_alert_level02 = '';
+              tdCLass_alert_level01 = '';
+              tdCLass_alert_level02 = 'tips red flash';
               alert_times_ttg.danger++;
               break;
             case 1:
-              tdCLass_alert_level01 = '';
-              tdCLass_alert_level02 = 'tips red flash';
+              tdCLass_alert_level01 = 'tips yellow flash';
+              tdCLass_alert_level02 = '';
               alert_times_ttg.warning++;
               break;
           }
