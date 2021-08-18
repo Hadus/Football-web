@@ -1,6 +1,7 @@
 (
   function (w, d) {
     Object.assign(w, {...w.config}, {
+      flagServerPath: 0, // api server: 0-本地，-1-跨域，1-服务器
       tableNode_index: d.querySelector('#s_table_index'), // 列表的 table
       tableNode_ttg: d.querySelector('#s_table_ttg'), // 列表的 table
       s_bet: d.querySelector('#s_bet'), // bet
@@ -18,7 +19,7 @@
       }, 
       isPlayAudio: false, // 是否播放音频
       filterWithoutAudio: false, // bet 切换触发音频播放
-      showTableName: 'index',// 是否为首页
+      showTabName: 'index',// 是否为首页
       mesNode: d.querySelector('#s_mes'), // mes box
       mesContentNode: d.querySelector('#s_mesContent'), // mes content
       mesCallback: null, // mes 的回调函数
@@ -34,6 +35,7 @@
       },
     });
 
+    defineServerPath(); // 定义当前 server 环境
     getData();
     initBetConst();
     bindBet(betAction);
@@ -50,6 +52,19 @@
 
     // 提示用户选择是否开启预警
     audioAlert();
+
+    /* 方法：获取当前数据的server地址 */
+    function defineServerPath(host) {
+      if(host){
+        w.flagServerPath = 1; // 服务器调用
+      } else{ // 本地调用
+        if(w.server.cors){ // 跨域
+          w.flagServerPath = -1;
+        } else{
+          w.flagServerPath = 0;
+        }
+      }
+    }
 
     /* 方法：初始化 table */
     function initTable({ nodeStr_index = '', nodeStr_ttg = '' }) {
@@ -465,7 +480,7 @@
         hiddenCalcIds: []
       }, () => {
         // api：get 列表数据--静态调用 _file，API 调用 _api
-        if (!w.location.host) {
+        if (!flagServerPath) {
           getData_file(bet_params);
         } else {
           getData_api(bet_params);
@@ -613,7 +628,13 @@
 
     /* 方法：获取当前网址信息 */
     function getCurrentUrl() {
-      return w.location.origin + '/';
+      let origin = '';
+      if(w.server.cors){
+        origin = w.server.path;
+      } else{
+        origin = w.location.origin;
+      }
+      return origin + '/';
     }
 
     /* 方法：绑定 tabs */
@@ -692,7 +713,7 @@
     /* 方法：获取数据 */
     function changeBlockBetStatus(params, callback) {
       // api：get 列表数据--静态调用 _file，API 调用 _api
-      if (!w.location.host) {
+      if (!flagServerPath) {
         changeBlockBetStatus_file(params, callback);
       } else {
         changeBlockBetStatus_api(params, callback);
@@ -787,7 +808,7 @@
     /* 方法：获取数据 */
     function getCalculator(params, outputNodeList) {
       // api：get 列表数据--静态调用 _file，API 调用 _api
-      if (!w.location.host) {
+      if (!flagServerPath) {
         getCalculator_file(params, outputNodeList);
       } else {
         getCalculator_api(params, outputNodeList);
@@ -847,7 +868,7 @@
         userCalcReq: {}
       };
 
-      if(showTableName === 'index'){
+      if(showTabName === 'index'){
         // 欧赔 或者 亚赔
         if(w.dialogData.hgPDisplay == ''){ // 欧赔
           console.log('欧赔')
@@ -891,7 +912,7 @@
             rateRW: inputValueList.jzWRate,
           }
         }
-      } else if(showTableName === 'ttg'){
+      } else if(showTabName === 'ttg'){
         res_params.userCalcReq = {
           crownBSRate: {
             point: inputValueList.hgPValue, // hgPValue
@@ -937,7 +958,7 @@
         const key = ele.dataset['outputKey'];
         keyList[key] = ele;
       })
-      if(w.showTableName === 'index'){
+      if(w.showTabName === 'index'){
         const ele = res.data[0];
         keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
         keyList['jzWPayAmount'].value = ele.jzWPayAmount>0? ele.jzWPayAmount : '';
@@ -946,7 +967,7 @@
         keyList['hgDPayAmount'].value = ele.hgDPayAmount>0? ele.hgDPayAmount : '';
         keyList['hgLPayAmount'].value = ele.hgLPayAmount>0? ele.hgLPayAmount : '';
         keyList['totalBenefitAmount'].value = ele.totalBenefitAmount!=0? ele.totalBenefitAmount : '';
-      } else if(w.showTableName === 'ttg'){
+      } else if(w.showTabName === 'ttg'){
         const ele = res.ttgData[0];
         keyList['totalBenefitPoint'].value = ele.totalBenefitPoint;
         keyList['jzS0PayAmount'].value = ele.jzS0PayAmount>0? ele.jzS0PayAmount : '';
@@ -1024,7 +1045,7 @@
       dialogContentNode.innerHTML = '';
       const ele = w.dialogData = Object.assign({}, obj);
       let nodeStr = '';
-      if(showTableName === 'index'){
+      if(showTabName === 'index'){
         let hgLRateFormat02 = ele.hgLRate.trim(),hgLRateFormat01 = '';
         if(hgLRateFormat02.includes(' ')){
           hgLRateFormat01 = hgLRateFormat02.split(' ')[0];
@@ -1119,7 +1140,7 @@
             </div>
           </div>
         `;
-      } else if(showTableName === 'ttg'){
+      } else if(showTabName === 'ttg'){
         nodeStr += `
           <div>
             <label>请输入投注金额：<input class="big" data-input-key="jzPayAmount" type="number" value="10000"> 元</label>
