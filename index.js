@@ -20,7 +20,6 @@ function initCommonJS(time) {
     './JS/utils.js',
     './JS/api.js',
     './Config/config.js',
-    './Football/football.js'
   ];
 
   jsFileList.forEach((ele) => {

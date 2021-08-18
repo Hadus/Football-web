@@ -448,6 +448,7 @@
       w.mesCallback = () => {
         d.querySelector('#s_audio_select').click();
       };
+      debugger
       pageScroll(false);
     }
     /* 方法：绑定预警提醒开关 */
