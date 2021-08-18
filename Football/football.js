@@ -448,7 +448,6 @@
       w.mesCallback = () => {
         d.querySelector('#s_audio_select').click();
       };
-      debugger
       pageScroll(false);
     }
     /* 方法：绑定预警提醒开关 */
@@ -695,7 +694,7 @@
     function getCalculator_file(params) {
       let data = params && {
         matchId : params.matchId,
-        matchType : params.matchId, 
+        matchType : params.matchType, 
         alarmH : params.alarmH,
         alarmA : params.alarmA
       } || {
