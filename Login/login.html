@@ -18,9 +18,15 @@
 <body>
   <div class="login-box">
     <form action="javascript:;">
-      <p><label>用户名：<input class="big" type="text" required id="s_username"></label></p>
-      <p><label>密码：<input class="big" type="password" required id="s_password"></label></p>
-      <p><label><button class="primary" id="s_login">登录</button></label></p>
+      <p class="username-box">
+        <i> </i>
+        <input type="text" required id="s_username" placeholder="请输入用户名。。" autocomplete="off">
+      </p>
+      <p class="password-box">
+        <i> </i>
+        <input type="password" required id="s_password" placeholder="请输入密码。。" autocomplete="off">
+      </p>
+      <p><button class="primary" id="s_login">登录</button></p>
     </form>
   </div>
 </body>

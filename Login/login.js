@@ -11,7 +11,7 @@
     /* 方法：初始化 JSON */
     function initJSON() {
       const dataFileList = [
-        "../lib/data/Login.js",
+        "../lib/data/LoginData.js",
       ]
       dataFileList.forEach((ele) => {
         const script = d.createElement('script');
@@ -39,6 +39,21 @@
       const s_username = d.querySelector('#s_username');
       const s_password = d.querySelector('#s_password');
       const s_login = d.querySelector('#s_login');
+      // username
+      s_username.addEventListener('focus', function (e) {
+        this.offsetParent.classList.add('active');
+      })
+      s_username.addEventListener('blur', function (e) {
+        this.offsetParent.classList.remove('active');
+      })
+      // password
+      s_password.addEventListener('focus', function (e) {
+        this.offsetParent.classList.add('active');
+      })
+      s_password.addEventListener('blur', function (e) {
+        this.offsetParent.classList.remove('active');
+      })
+      // login
       s_login.addEventListener('click', function (e) {
         const username = s_username.value;
         const password = s_password.value;
@@ -60,9 +75,9 @@
         return;
       }
 
-      login()
+      login();
     }
-
+  
     /* 方法：登录 */
     function login(params) {
       console.log('login...');
