@@ -468,7 +468,7 @@
     /* 方法：获取当前网址信息 */
     function getCurrentUrl() {
       let origin = '';
-      if(w.server.cors){
+      if(w.server.cors && !w.location.host){
         origin = w.server.path;
       } else {
         origin = w.location.origin;
