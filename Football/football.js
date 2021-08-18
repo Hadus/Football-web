@@ -631,7 +631,7 @@
       let origin = '';
       if(w.server.cors){
         origin = w.server.path;
-      } else{
+      } else {
         origin = w.location.origin;
       }
       return origin + '/';
