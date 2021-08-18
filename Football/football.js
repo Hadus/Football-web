@@ -35,7 +35,7 @@
       },
     });
 
-    defineServerPath(); // 定义当前 server 环境
+    defineServerPath(w.location.host); // 定义当前 server 环境
     getData();
     initBetConst();
     bindBet(betAction);
