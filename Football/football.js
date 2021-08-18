@@ -1,6 +1,7 @@
 (
   function (w, d) {
     Object.assign(w, {...w.config}, {
+      flagServerPath: 0, // api server: 0-本地，-1-跨域，1-服务器
       tableNode_index: d.querySelector('#s_table_index'), // 列表的 table
       tableNode_ttg: d.querySelector('#s_table_ttg'), // 列表的 table
       response: {}, // API返回值
@@ -17,7 +18,7 @@
       }, 
       isPlayAudio: false, // 是否播放音频
       filterWithoutAudio: false, // bet 切换触发音频播放
-      showTableName: 'index',// 是否为首页
+      showTabName: 'index',// 是否为首页
       mesNode: d.querySelector('#s_mes'), // mes box
       mesContentNode: d.querySelector('#s_mesContent'), // mes content
       mesCallback: null, // mes 的回调函数
@@ -33,7 +34,7 @@
         top: 0
       },
     });
-
+    defineServerPath(); // 定义当前 server 环境
     getData();
     bindFilter(filterAction);
     bindSwitchAudio();
@@ -47,6 +48,19 @@
 
     // 提示用户选择是否开启预警
     audioAlert();
+
+    /* 方法：获取当前数据的server地址 */
+    function defineServerPath(host) {
+      if(host){
+        w.flagServerPath = 1; // 服务器调用
+      } else{ // 本地调用
+        if(w.server.cors){ // 跨域
+          w.flagServerPath = -1;
+        } else{
+          w.flagServerPath = 0;
+        }
+      }
+    }
 
     /* 方法：初始化 table */
     function initTable({ nodeStr_index = '', nodeStr_ttg = '' }) {
@@ -123,7 +137,7 @@
                 </div>
                 <div class="is-bet">
                   不关注：
-                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
+                  <div class="s-is-bet-index switch ${ele.isBet===1?'active': ''}" data-index=${index} data-match-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
                 </div>
@@ -210,11 +224,11 @@
                   <span class="team2">${ele.teamNameA}</span>
                 </div>
                 <div class="calculator">
-                  <button class="primary s-calculator-index" data-index=${index}>告警设置</button>
+                  <button class="primary s-calculator-ttg" data-index=${index}>告警设置</button>
                 </div>
                 <div class="is-bet">
                   不关注：
-                  <div class="s-is-bet-ttg switch ${ele.isBet===1?'active': ''}" data-index=${index} data-calc-id=${ele.matchId}>
+                  <div class="s-is-bet-ttg switch ${ele.isBet===1?'active': ''}" data-index=${index} data-match-id=${ele.matchId}>
                     <div class="switch-handle"></div>
                   </div>
                 </div>
@@ -336,7 +350,7 @@
         hiddenMatchIds: []
       }, () => {
         // api：get 列表数据--静态调用 _file，API 调用 _api
-        if (!w.location.host) {
+        if (!flagServerPath) {
           getData_file(bet_params);
         } else {
           getData_api(bet_params);
@@ -453,7 +467,13 @@
 
     /* 方法：获取当前网址信息 */
     function getCurrentUrl() {
-      return w.location.origin + '/';
+      let origin = '';
+      if(w.server.cors){
+        origin = w.server.path;
+      } else {
+        origin = w.location.origin;
+      }
+      return origin + '/';
     }
 
     /* 方法：绑定 tabs */
@@ -534,7 +554,7 @@
     /* 方法：获取数据 */
     function changeBlockBetStatus(params, callback) {
       // api：get 列表数据--静态调用 _file，API 调用 _api
-      if (!w.location.host) {
+      if (!flagServerPath) {
         changeBlockBetStatus_file(params, callback);
       } else {
         changeBlockBetStatus_api(params, callback);
@@ -634,7 +654,7 @@
     /* 方法：获取数据 */
     function getCalculator(params) {
       // api：get 列表数据--静态调用 _file，API 调用 _api
-      if (!w.location.host) {
+      if (!flagServerPath) {
         getCalculator_file(params);
       } else {
         getCalculator_api(params);
@@ -645,7 +665,7 @@
     function getCalculator_api(params) {
       let data = params && {
         matchId : params.matchId,
-        matchType : params.matchId, 
+        matchType : params.matchType, 
         alarmH : params.alarmH,
         alarmA : params.alarmA
       } || {
@@ -703,19 +723,18 @@
           inputValueList[key] = ele.value.trim();
         }
       });
-
+      
       let res_params = {
         matchId: w.dialogData.matchId,
         alarmH : inputValueList.alarmH || null,
         alarmA : inputValueList.alarmA || null
       };
 
-      if(showTableName === 'index'){
+      if(showTabName === 'index'){
         res_params.matchType = 0;
        
-      } else if(showTableName === 'ttg'){
+      } else if(showTabName === 'ttg'){
         res_params.matchType = 1;
-        
       }
       return {
         res_params,
@@ -727,7 +746,7 @@
       const invaildInputObj = {
         length: 0
       };
-      const inputNodeList = dialogContentNode.querySelectorAll('input[data-input-key]');      
+      const inputNodeList = dialogContentNode.querySelectorAll('input[data-input-key]');
       inputNodeList.forEach((ele) => {
         // ele.classList.remove('danger');
         const key = ele.dataset['inputKey'];
@@ -742,9 +761,9 @@
     }
 
     /* 方法：calculator 接口数据请求完成后的 callback */
-    function callback_calculator(res) {
+    function callback_calculator() {
       getData();
-      bindCancleDialog();
+      d.querySelector('#s_cancelDialog').click();
     }
 
     /* 方法：message 取消 */  
@@ -795,7 +814,7 @@
       const userRateH = ele.crownBDRate.hasUserSettingH ? ele.crownBDRate.userRateH : '';
       const userPoint = ele.crownBDRate.hasUserSettingPoint ? ele.crownBDRate.userPoint : '';
       const userRateA = ele.crownBDRate.hasUserSettingA ? ele.crownBDRate.userRateA : '';
-      if(showTableName === 'index'){
+      if(showTabName === 'index'){
         nodeStr += `
           <div>
             <p>当前赔率：</p>
@@ -812,21 +831,21 @@
             <p>
           </div>
           <div>
-            <p>当前赔率：</p>
+            <p>设置赔率：</p>
             <p class="label-box">
               <label>主队（<b><i>${ele.teamNameH}</i></b>）：
                 <input data-input-key="alarmH" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
               </label>
               <label>point：
-                <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
+                <input class="big" disabled type="number" value="${userPoint}">
               </label>
               <label>客队（<b><i>${ele.teamNameA}</i></b>）：
-                <input data-input-key="alarmA" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
+                <input data-input-key="alarmA" data-input-valid="${ele.crownBDRate.RateA}" class="big" type="number" value="${userRateA}">
               </label>
             <p>
           </div>
         `;
-      } else if(showTableName === 'ttg'){
+      } else if(showTabName === 'ttg'){
         nodeStr += `
           <div>
             <p>当前赔率：</p>
@@ -843,16 +862,16 @@
             <p>
           </div>
           <div>
-            <p>当前赔率：</p>
+            <p>设置赔率：</p>
             <p class="label-box">
               <label>主队（<b><i>${ele.teamNameH}</i></b>）：
                 <input data-input-key="alarmH" data-input-valid="${ele.crownBDRate.rateH}" class="big" type="number" value="${userRateH}">
               </label>
               <label>point：
-                <input class="big" disabled type="number" value="${ele.crownBDRate.point}">
+                <input class="big" disabled type="number" value="${userPoint}">
               </label>
               <label>客队（<b><i>${ele.teamNameA}</i></b>）：
-                <input data-input-key="alarmA" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" alue="${userRateA}">
+                <input data-input-key="alarmA" data-input-valid="${ele.crownBDRate.rateA}" class="big" type="number" value="${userRateA}">
               </label>
             <p>
           </div>
