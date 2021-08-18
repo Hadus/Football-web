@@ -278,8 +278,8 @@ header .loginout {
 
 .tips::after {
   content: "";
-  width: 10px;
-  height: 10px;
+  width: 0px;
+  height: 0px;
   border-radius: 50%;
   display: inline-block;
   margin-left: 5px;
@@ -287,10 +287,14 @@ header .loginout {
 }
 
 .tips.red::after {
+  width: 10px;
+  height: 10px;
   background: #ff0102;
 }
 
 .tips.yellow::after {
+  width: 10px;
+  height: 10px;
   background: #ffaf01;
 }
 

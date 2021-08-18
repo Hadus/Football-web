@@ -15,23 +15,35 @@ function initCSS() {
 }
 
 /* 方法：初始化 JS */
-function initJS() {
+function initCommonJS(time) {
   const jsFileList = [
     './JS/utils.js',
     './JS/api.js',
     './Config/config.js',
+  ];
+
+  jsFileList.forEach((ele) => {
+    const script = document.createElement('script');
+    script.src = ele + '?' + time;
+    document.querySelector('body').appendChild(script);
+  })
+}
+
+/* 方法：初始化 JS */
+function initJS(time) {
+  const jsFileList = [
     './Football/football.js'
   ];
 
   jsFileList.forEach((ele) => {
     const script = document.createElement('script');
-    script.src = ele + '?' + new Date().getTime();
+    script.src = ele + '?' + time;
     document.querySelector('body').appendChild(script);
   })
 }
 
 /* 方法：初始化 JSON */
-function initJSON() {
+function initJSON(time) {
   const dataFileList = [
     "./lib/data/FootballData.js",
     "./lib/data/CalculatorData.js",
@@ -39,18 +51,20 @@ function initJSON() {
   ]
   dataFileList.forEach((ele) => {
     const script = document.createElement('script');
-    script.src = ele + '?' + new Date().getTime();
+    script.src = ele + '?' + time;
     document.querySelector('body').appendChild(script);
   })
 }
 
 
 window.onload = function () {
+  const time = new Date().getTime();
   if (!window.location.host) {
     Object.assign(window, {
       mock: {}
     });
-    initJSON();
+    initJSON(time);
   }
-  initJS();
+  initCommonJS(time);
+  initJS(time);
 }
