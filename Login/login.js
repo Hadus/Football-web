@@ -37,7 +37,7 @@
     /* 方法：初始化 login */
     function init() {
       bindBackGround(); // 绑定背景
-      // initLogin();
+      initLogin();
     }
 
     /* 方法：初始化 login */
@@ -201,7 +201,6 @@
           return node.currentStyle[attr];
         }
       }
-      // ---- bindBackGround ---
     }
 
   }
