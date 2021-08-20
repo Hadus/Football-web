@@ -128,23 +128,25 @@
     /* 方法：切换背景图 */
     function bindBackGround() {
       const backgroundRefreshTime = 5;
-      const maxIndex = 2;
+      const maxIndex = 5;
       const backgroundImageUrlStart = '../lib/images/background_';
 
       const sliderLeft = document.body.clientWidth;
 
       const s_slider_box = d.querySelector('#s_slider_box');
       const lisNode = [];
+      const stepTime = 30;
+
       lisInit();
       autoPlay();
       
       /* 方法：初始化 */
       function lisInit() {
-        for(let i = 1; i < maxIndex + 1; i++) {
+        for(let i = 0; i < maxIndex; i++) {
           lisNode[i] = d.createElement('li');
-          i !== 1 && (lisNode[i].style.left = sliderLeft + 'px');
+          i && (lisNode[i].style.left = sliderLeft + 'px');
           const img = d.createElement('img');
-          img.src = backgroundImageUrlStart + (i.toString().padStart(2, '0')) + '.jpeg';
+          img.src = backgroundImageUrlStart + ((i + 1).toString().padStart(2, '0')) + '.jpeg';
           lisNode[i].appendChild(img);
           s_slider_box.appendChild(lisNode[i]);
         }
@@ -152,56 +154,51 @@
 
       /* 方法：初始化 */
       function autoPlay() {
-        let index = 0;
-        // const timer = setInterval(() => {
-          
-        // }, backgroundRefreshTime * 1000);
-
+        w.index_li = 0;
+        setInterval(playOnce, backgroundRefreshTime * 1000);
       }
 
       /* 方法：初始化 */
       function playOnce() {
-        animate(lis[key], {
+        animate(lisNode[w.index_li], {
           left: -sliderLeft
         });
-        key++;
-        key = key >= lis.length ? 0 : key;
-        lis[key].style.left = sliderLeft + "px"; //立马让下一张跑到右边去
-        setCtrl();
-        animate(lis[key], {
+        w.index_li++;
+        w.index_li = w.index_li >= lisNode.length ? 0 : w.index_li;
+        lisNode[w.index_li].style.left = sliderLeft + "px"; //立马让下一张跑到右边去
+        animate(lisNode[w.index_li], {
           left: 0
         });
       }
 
-      /*  */
-      function animate(obj, json) {
-        clearInterval(obj.timer);
-        const stepTime = 30;
-        obj.timer = setInterval(function() {
+      /* 方法：动画 */
+      function animate(node, targetAttrJson) {
+        clearInterval(node.timer);
+        node.timer = setInterval(function() {
           var flag = true;
-          for (let attr in json) {
-            const current = parseInt(getCurrent(obj, attr));
-            const jsonAttr = parseInt(json[attr]);
-            let step = (jsonAttr - current) / 10;
+          for (let attr in targetAttrJson) {
+            const currentAttr = parseInt(getCurrent(node, attr));
+            const targetAttr = parseInt(targetAttrJson[attr]);
+            let step = (targetAttr - currentAttr) / 10;
             step = step > 0 ? Math.ceil(step) : Math.floor(step);
-            obj.style[attr] = current + step + "px";
+            node.style[attr] = currentAttr + step + "px";
             //判断current和target是否相等
-            if (current != jsonAttr) {
+            if (currentAttr != targetAttr) {
                 flag = false;
             }
           }
           if (flag) {
-            clearInterval(obj.timer);
+            clearInterval(node.timer);
           }
         }, stepTime);
       }
 
-      /*  */
-      function getCurrent(obj, attr) {
+      /* 方法：获取当前元素属性 */
+      function getCurrent(node, attr) {
         if (window.getComputedStyle) {
-          return window.getComputedStyle(obj, null)[attr];
+          return window.getComputedStyle(node, null)[attr];
         } else {
-          return obj.currentStyle[attr];
+          return node.currentStyle[attr];
         }
       }
       // ---- bindBackGround ---

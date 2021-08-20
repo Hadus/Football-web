@@ -1,6 +1,4 @@
 body {
-  background: url('../lib/images/background_01.jpeg') 0 0 no-repeat;
-  background-size: cover;
   display: block;
   position: relative;
 }
@@ -26,14 +24,15 @@ body {
 .login-box {
   width: 360px;
   height: 360px;
-  opacity: .98;
+  opacity: .8;
   position: absolute;
-  right: 150px;
-  bottom: 150px;
+  right: 250px;
+  bottom: 200px;
   background: #ccc;
   border-radius: 5px;
   box-sizing: border-box;
   padding-top: 40px;
+  z-index: 2001;
 }
 
 p.welcome {
