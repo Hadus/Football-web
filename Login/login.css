@@ -71,7 +71,7 @@ input {
 }
 
 input::placeholder {
-  opacity: .4;
+  opacity: .2;
 }
 
 button {
