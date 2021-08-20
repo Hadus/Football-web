@@ -179,7 +179,7 @@
           for (let attr in targetAttrJson) {
             const currentAttr = parseInt(getCurrent(node, attr));
             const targetAttr = parseInt(targetAttrJson[attr]);
-            let step = (targetAttr - currentAttr) / 10;
+            let step = (targetAttr - currentAttr) / 15;
             step = step > 0 ? Math.ceil(step) : Math.floor(step);
             node.style[attr] = currentAttr + step + "px";
             //判断current和target是否相等
