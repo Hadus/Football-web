@@ -27,7 +27,7 @@ function getCurrentUrl() {
 
 /* 方法：get session */
 function getSession(key) {
-  localStorage.getItem(key);
+  return sessionStorage.getItem(key);
 }
 
 /* 方法：set session */

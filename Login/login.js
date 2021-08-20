@@ -1,27 +1,31 @@
 (
   function (w, d) {
     w.onload = function () {
-      if (!w.location.host) {
-        initJSON();
+      const time = new Date().getTime();
+      if (!window.location.host) {
+        Object.assign(window, {
+          mock: {}
+        });
+        initJSON(time);
       }
-      initJS();
+      initCommonJS(time);// commonJS 先请求预防可能会报错的情况
       init();
     }
 
     /* 方法：初始化 JSON */
-    function initJSON() {
+    function initJSON(time) {
       const dataFileList = [
         "../lib/data/LoginData.js",
       ]
       dataFileList.forEach((ele) => {
         const script = d.createElement('script');
-        script.src = ele + '?' + new Date().getTime();
+        script.src = ele + '?' + time;
         d.querySelector('body').appendChild(script);
       })
     }
 
     /* 方法：初始化 JS */
-    function initJS() {
+    function initCommonJS(time) {
       const jsFileList = [
         '../JS/api.js',
         '../JS/utils.js',
@@ -29,7 +33,7 @@
     
       jsFileList.forEach((ele) => {
         const script = d.createElement('script');
-        script.src = ele + '?' + new Date().getTime();
+        script.src = ele + '?' + time;
         d.querySelector('body').appendChild(script);
       })
     }
@@ -119,8 +123,8 @@
 
       setTimeout(() => {
         console.log("api 请求成功==>");
-        console.log(w.loginResponse);
-        w.setSession('token', 'pass');
+        const token = w.mock.LoginData.token;
+        w.setSession('token', token);
         w.location.href = '../index.html';
       }, .5 * 1000);
     }
